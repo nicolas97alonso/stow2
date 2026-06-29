@@ -1,20 +1,27 @@
--- 🌈 Syntax Highlighting & Indentation: Treesitter
+-- 🌈 Syntax Highlighting & Indentation: Treesitter (main branch — required for Neovim 0.12+)
 return {
   "nvim-treesitter/nvim-treesitter",
-  branch = "master",
+  branch = "main",
+  lazy = false,
   build = ":TSUpdate",
-  event = { "BufReadPost", "BufNewFile" },
   config = function()
-    require("nvim-treesitter.configs").setup({
-      ensure_installed = {
-        "lua", "python", "sql", "json", "yaml", "markdown", "markdown_inline",
-        "bash", "javascript", "jinja", "jinja_inline", "dockerfile", "groovy",
+    local ts = require("nvim-treesitter")
+
+    local parsers = {
+      "lua", "python", "sql", "json", "yaml", "markdown", "markdown_inline",
+      "bash", "javascript", "dockerfile", "groovy",
+    }
+    ts.install(parsers)
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = {
+        "lua", "python", "sql", "json", "yaml", "markdown",
+        "sh", "bash", "javascript", "dockerfile", "groovy",
       },
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
-      },
-      indent = { enable = true },
+      callback = function()
+        pcall(vim.treesitter.start)
+        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end,
     })
   end,
 }
