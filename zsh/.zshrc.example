@@ -1,22 +1,39 @@
 # -----------------------------
-# 1. ZSH Plugins (via Homebrew)
+# 1. PATHS
 # -----------------------------
-source /Users/nicolas.alonso/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /Users/nicolas.alonso/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# -----------------------------
-# 2. PATHS
-# -----------------------------
-export PATH="/opt/homebrew/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+typeset -U path PATH   # dedup PATH
 
 # Install Homebrew casks (GUI apps) to ~/Applications — no sudo on this laptop,
 # so brew can't write the default /Applications.
 export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
 
 # -----------------------------
-# 3. ALIASES
+# 2. COMPLETIONS
+# -----------------------------
+# Wire Homebrew's completion definitions (_uv, _az, _gh, _sqlfluff, ...) then init.
+fpath=("$HOME/homebrew/share/zsh/site-functions" $fpath)
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'   # case-insensitive
+
+# -----------------------------
+# 3. HISTORY
+# -----------------------------
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_ALL_DUPS \
+       HIST_IGNORE_SPACE HIST_REDUCE_BLANKS INC_APPEND_HISTORY
+
+# -----------------------------
+# 4. SHELL OPTIONS
+# -----------------------------
+setopt AUTO_CD INTERACTIVE_COMMENTS EXTENDED_GLOB GLOB_DOTS
+
+# -----------------------------
+# 5. ALIASES
 # -----------------------------
 alias desktop="cd ~/Desktop"
 alias repos="cd ~/code"
@@ -25,26 +42,36 @@ alias stu="cd ~/code/nico/studies/"
 alias home="cd ~"
 alias fut="cd ~/code/projects/de-football/"
 
-# -----------------------------
-# 4. Colors
-# -----------------------------
-export LS_COLORS="di=1;34:fi=0;37"
-
-# -----------------------------
-# 5. Prompt — Oh My Posh
-# -----------------------------
-eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/clean.omp.json)"
-
-# -----------------------------
-# 6. Tools & shortcuts
-# -----------------------------
 # ADF Monitor — morning digest (19:00 yesterday → 08:00 today, Europe/Madrid)
 alias adf='cd ~/code/adf_monitor && uv run monitor.py yesterday'
 alias data-sync="~/scripts/data_sync.sh"
 alias data-pull="~/scripts/data_pull.sh"
 alias pyclean='find . -type d -name "__pycache__" -exec rm -rf {} +'
 
-export DYLD_LIBRARY_PATH=/Users/nicolas.alonso/homebrew/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
-
 # sqlnico — local Azure SQL query tool (https://localhost:4123)
 alias sqlnico='/Users/nicolas.alonso/code/projects/sqlnico/start.sh'
+
+# -----------------------------
+# 6. ENV
+# -----------------------------
+export LS_COLORS="di=1;34:fi=0;37"
+export DYLD_LIBRARY_PATH=/Users/nicolas.alonso/homebrew/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
+
+# -----------------------------
+# 7. TOOLS (zoxide / fzf / direnv)
+# -----------------------------
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
+command -v fzf    >/dev/null && source <(fzf --zsh)
+command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+
+# -----------------------------
+# 8. PROMPT — Oh My Posh
+# -----------------------------
+eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/clean.omp.json)"
+
+# -----------------------------
+# 9. ZSH PLUGINS (autosuggestions, then syntax-highlighting LAST)
+# -----------------------------
+source /Users/nicolas.alonso/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# zsh-syntax-highlighting MUST be the final sourced line — do not add anything below it.
+source /Users/nicolas.alonso/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

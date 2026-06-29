@@ -8,7 +8,7 @@
         {
           "type": "path",
           "style": "plain",
-          "foreground": "#7aa89f",
+          "foreground": "#7e9cd8",
           "properties": {
             "style": "folder"
           },
@@ -17,9 +17,9 @@
         {
           "type": "git",
           "style": "plain",
-          "foreground": "#7e9cd8",
+          "foreground": "#d27e99",
           "properties": {
-            "branch_icon": "",
+            "branch_icon": " ",
             "commit_icon": "",
             "fetch_status": false
           },
@@ -28,7 +28,7 @@
         {
           "type": "executiontime",
           "style": "plain",
-          "foreground": "#c0a36e",
+          "foreground": "#727169",
           "properties": {
             "threshold": 1000,
             "style": "round"
@@ -43,9 +43,15 @@
       "newline": true,
       "segments": [
         {
-          "type": "text",
+          "type": "status",
           "style": "plain",
-          "foreground": "#957fb8",
+          "foreground": "#98bb6c",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#c34043{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true
+          },
           "template": "> "
         }
       ]

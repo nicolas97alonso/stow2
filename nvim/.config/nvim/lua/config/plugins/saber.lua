@@ -3,6 +3,12 @@ return {
   version = false,
   event = { "BufReadPre", "BufNewFile" }, -- 🟢 FIXED: Standard events instead of 'LazyFile'
   config = function()
+    -- 🎨 Colorful file/folder icons (replaces nvim-web-devicons everywhere)
+    require("mini.icons").setup({
+      style = "glyph",
+    })
+    require("mini.icons").mock_nvim_web_devicons()
+
     require("mini.indentscope").setup({
       symbol = "│",
       options = { try_as_border = true },

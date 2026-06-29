@@ -69,7 +69,7 @@ config.line_height = 1.15
 config.cell_width = 1.0
 
 -- 3. Transparent & Blurred Background (macOS specific)
-config.window_background_opacity = 0.8
+config.window_background_opacity = 0.75
 config.macos_window_background_blur = 30
 
 -- 4. Borderless window decoration (Hides title bar & buttons, allows resizing)

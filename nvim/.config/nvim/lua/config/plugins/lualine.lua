@@ -1,12 +1,12 @@
--- 📏 Bottom statusline: lualine (Catppuccin Edition - Bubbles)
+-- 📏 Bottom statusline: lualine (Bubbles)
 return {
   "nvim-lualine/lualine.nvim",
-  dependencies = { "nvim-tree/nvim-web-devicons" }, 
+  dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
     require("lualine").setup({
       options = {
-        -- 🎨 Theme matches your Kanagawa setup
-        theme = "kanagawa",
+        -- 🎨 Theme matches your Tokyonight setup
+        theme = "tokyonight",
         
         -- 🫧 BUBBLE SEPARATORS:
         -- Using rounded ends to match your Oh My Posh theme
