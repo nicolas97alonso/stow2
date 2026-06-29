@@ -91,4 +91,7 @@ config.use_fancy_tab_bar = false -- simple/retro tab bar
 -- 7. Cursor style
 config.default_cursor_style = "BlinkingBlock"
 
+-- 8. Don't prompt to confirm when closing a window/tab
+config.window_close_confirmation = "NeverPrompt"
+
 return config

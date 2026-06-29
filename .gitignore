@@ -1,3 +1,7 @@
 .DS_Store
 *.swp
 *.swo
+
+# zsh is per-machine (work vs personal: different homebrew prefix, username, aliases).
+# Tracked as zsh/.zshrc.example — copy + edit per machine. See README.
+zsh/.zshrc
