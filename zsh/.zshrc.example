@@ -7,14 +7,20 @@ typeset -U path PATH   # dedup PATH
 
 # Install Homebrew casks (GUI apps) to ~/Applications — no sudo on this laptop,
 # so brew can't write the default /Applications.
-export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
+export HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications"
 
 # -----------------------------
 # 2. COMPLETIONS
 # -----------------------------
 # Wire Homebrew's completion definitions (_uv, _az, _gh, _sqlfluff, ...) then init.
 fpath=("$HOME/homebrew/share/zsh/site-functions" $fpath)
-autoload -Uz compinit && compinit
+# Cache compinit: full rebuild at most once a day, otherwise fast load (-C skips the scan).
+autoload -Uz compinit
+if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'   # case-insensitive
 
@@ -24,8 +30,8 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'   # case-insensitive
 HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=50000
-setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_ALL_DUPS \
-       HIST_IGNORE_SPACE HIST_REDUCE_BLANKS INC_APPEND_HISTORY
+setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS \
+       HIST_IGNORE_SPACE HIST_REDUCE_BLANKS
 
 # -----------------------------
 # 4. SHELL OPTIONS
