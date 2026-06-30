@@ -24,19 +24,22 @@ return {
   {
     "neovim/nvim-lspconfig",
     config = function()
+      -- Apply shared capabilities to all servers. mason-lspconfig auto-enables
+      -- installed servers (automatic_enable = true), so no manual vim.lsp.enable().
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      vim.lsp.config("pyright", {
-        capabilities = capabilities,
-      })
-      for _, server in ipairs({ "ruff", "dockerls", "marksman", "bashls" }) do
+      for _, server in ipairs({ "pyright", "ruff", "dockerls", "marksman", "bashls" }) do
         vim.lsp.config(server, { capabilities = capabilities })
       end
-      vim.lsp.enable({ "pyright", "ruff", "dockerls", "marksman", "bashls" })
 
       -- LSP keymaps, bound only once a server attaches to the buffer
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
           local buf = args.buf
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          -- Let pyright own hover; ruff's hover would duplicate it.
+          if client and client.name == "ruff" then
+            client.server_capabilities.hoverProvider = false
+          end
           local map = function(keys, fn, desc)
             vim.keymap.set("n", keys, fn, { buffer = buf, desc = "LSP: " .. desc })
           end

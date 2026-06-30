@@ -1,9 +1,11 @@
 return {
   "echasnovski/mini.nvim", -- We use the main repo to ensure it downloads correctly
   version = false,
-  event = { "BufReadPre", "BufNewFile" }, -- 🟢 FIXED: Standard events instead of 'LazyFile'
+  lazy = false,      -- load early so mini.icons can mock devicons before lualine/nvim-tree
+  priority = 900,    -- after the colorscheme (1000), before everything else
   config = function()
-    -- 🎨 Colorful file/folder icons (replaces nvim-web-devicons everywhere)
+    -- 🎨 Colorful file/folder icons (replaces nvim-web-devicons everywhere).
+    -- Must mock BEFORE lualine/nvim-tree require the real nvim-web-devicons.
     require("mini.icons").setup({
       style = "glyph",
     })

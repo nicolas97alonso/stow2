@@ -88,8 +88,8 @@ config.enable_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false -- simple/retro tab bar
 
--- 7. Cursor style
-config.default_cursor_style = "BlinkingBlock"
+-- 7. Cursor style — steady block, no blink (zero idle redraw, best for battery)
+config.default_cursor_style = "SteadyBlock"
 
 -- 8. Don't prompt to confirm when closing a window/tab
 config.window_close_confirmation = "NeverPrompt"
