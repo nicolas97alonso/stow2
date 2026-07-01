@@ -5,8 +5,8 @@ return {
   config = function()
     require("lualine").setup({
       options = {
-        -- 🎨 Theme matches your Tokyonight setup
-        theme = "tokyonight",
+        -- 🎨 Theme matches your active colorscheme
+        theme = "auto",
         
         -- 🫧 BUBBLE SEPARATORS:
         -- Using rounded ends to match your Oh My Posh theme
