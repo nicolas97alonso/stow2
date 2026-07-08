@@ -9,7 +9,7 @@ return {
     config = function()
       require("noice").setup({
         lsp = {
-          progress = { enabled = true },
+          progress = { enabled = false }, -- silence pyright/mason "analyzing…" spam
           override = {
             ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
             ["vim.lsp.util.stylize_markdown"] = true,
@@ -24,7 +24,7 @@ return {
           lsp_doc_border = true,
         },
         cmdline = {
-          view = "cmdline", -- bottom line, not a floating box
+          view = "cmdline_popup", -- centered floating box
           format = {
             -- Match the terminal prompt: ">" symbol, same purple
             cmdline = { pattern = "^:", icon = ">", lang = "vim" },
@@ -34,11 +34,15 @@ return {
         },
       })
 
-    -- Align the cmdline ">" color with the terminal prompt (#957fb8).
+    -- Align the cmdline ">" color with the cyberdream purple.
     -- Deferred + on ColorScheme so it wins over noice's own scheduled highlights.
     local function cmdline_hl()
-      vim.api.nvim_set_hl(0, "NoiceCmdlineIcon", { fg = "#957fb8", bg = "NONE" })
-      vim.api.nvim_set_hl(0, "NoiceCmdlineIconSearch", { fg = "#957fb8", bg = "NONE" })
+      local palette = require("cyberdream.colors")
+      local variant = require("cyberdream.config").options.variant
+      local colors = (variant == "light" or (variant == "auto" and vim.o.background == "light"))
+        and palette.light or palette.default
+      vim.api.nvim_set_hl(0, "NoiceCmdlineIcon", { fg = colors.purple, bg = "NONE" })
+      vim.api.nvim_set_hl(0, "NoiceCmdlineIconSearch", { fg = colors.purple, bg = "NONE" })
     end
     vim.schedule(cmdline_hl)
     vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = function() vim.schedule(cmdline_hl) end })

@@ -1,29 +1,28 @@
--- 📏 Bottom statusline: lualine (Bubbles)
+-- 📏 Bottom statusline: lualine
 return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
     require("lualine").setup({
       options = {
-        -- 🎨 Theme matches your active colorscheme
-        theme = "auto",
-        
-        -- 🫧 BUBBLE SEPARATORS:
-        -- Using rounded ends to match your Oh My Posh theme
-        section_separators = { left = '', right = '' }, 
-        component_separators = { left = '', right = '' }, -- Subtle rounded dividers
-        
+        -- 🎨 Cyberdream lualine theme (transparent bg, detects palette)
+        theme = "cyberdream",
+
+        -- Flat separators: rounded "bubble" caps render as floating
+        -- half-circles on a transparent background, so keep it clean.
+        section_separators = '',
+        component_separators = { left = '', right = '' },
+
         globalstatus = true,
         disabled_filetypes = { statusline = { "alpha", "dashboard" } },
       },
-      -- Keeping your layout simple and sharp, but with rounded edges
       sections = {
-        lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
+        lualine_a = { 'mode' },
         lualine_b = { 'branch', 'diff', 'diagnostics' },
         lualine_c = { 'filename' },
         lualine_x = { 'encoding', 'fileformat', 'filetype' },
         lualine_y = { 'progress' },
-        lualine_z = { { 'location', separator = { right = '' }, left_padding = 2 } }
+        lualine_z = { 'location' }
       }
     })
   end,
