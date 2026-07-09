@@ -47,3 +47,19 @@ vim.opt.updatetime = 250          -- faster CursorHold / diagnostics
 vim.opt.undofile = true           -- persistent undo across sessions
 vim.opt.clipboard = "unnamedplus" -- use system clipboard
 vim.opt.timeoutlen = 400          -- snappier which-key popup
+vim.o.winborder = "rounded"       -- rounded borders for all floats (cmp inherits this)
+
+-- Indentation: 4-space default (python/groovy), expandtab everywhere
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "lua", "yaml", "json", "javascript", "markdown", "sh", "bash" },
+    callback = function()
+        vim.opt_local.shiftwidth = 2
+        vim.opt_local.tabstop = 2
+        vim.opt_local.softtabstop = 2
+    end,
+})

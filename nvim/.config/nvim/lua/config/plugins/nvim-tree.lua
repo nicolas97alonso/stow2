@@ -1,7 +1,7 @@
 -- 🗂️ File Explorer: nvim-tree
 return {
   "nvim-tree/nvim-tree.lua",
-  dependencies = { "nvim-tree/nvim-web-devicons" },
+  cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFocus", "NvimTreeFindFile" },
   config = function()
     require("nvim-tree").setup({
       view = {

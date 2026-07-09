@@ -1,9 +1,12 @@
 -- lua/config/plugins/lsp.lua
 
+local servers = { "pyright", "ruff", "dockerls", "marksman", "bashls", "clangd" }
+
 return {
   -- 🧰 Mason: LSP installer
   {
     "williamboman/mason.nvim",
+    cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
     config = function()
       require("mason").setup()
     end,
@@ -12,10 +15,11 @@ return {
   -- 🔌 Mason LSP Config
   {
     "williamboman/mason-lspconfig.nvim",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = { "williamboman/mason.nvim" },
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = { "pyright", "ruff", "dockerls", "marksman", "bashls" },
+        ensure_installed = servers,
       })
     end,
   },
@@ -23,11 +27,29 @@ return {
   -- 🧠 LSP Config (new API)
   {
     "neovim/nvim-lspconfig",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = { "hrsh7th/cmp-nvim-lsp" },
     config = function()
+      vim.diagnostic.config({
+        virtual_text = false,        -- no inline text; underline only (<leader>d for the message)
+        underline = true,
+        severity_sort = true,
+        update_in_insert = false,
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = "",
+            [vim.diagnostic.severity.WARN]  = "",
+            [vim.diagnostic.severity.INFO]  = "",
+            [vim.diagnostic.severity.HINT]  = "",
+          },
+        },
+        float = { border = "rounded", source = true },
+      })
+
       -- Apply shared capabilities to all servers. mason-lspconfig auto-enables
       -- installed servers (automatic_enable = true), so no manual vim.lsp.enable().
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      for _, server in ipairs({ "pyright", "ruff", "dockerls", "marksman", "bashls" }) do
+      for _, server in ipairs(servers) do
         vim.lsp.config(server, { capabilities = capabilities })
       end
 
@@ -68,6 +90,7 @@ return {
           lua = { "stylua" },
           sh = { "shfmt" },
           bash = { "shfmt" },
+          c = { "clang-format" },
         },
         format_on_save = {
           timeout_ms = 1000,

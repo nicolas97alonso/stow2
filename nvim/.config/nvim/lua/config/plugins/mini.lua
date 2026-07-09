@@ -21,9 +21,9 @@ return {
       },
     })
     
-    -- Disable it on files where it looks ugly (like the dashboard or help menus)
+    -- Disable it on files where it looks ugly (help menus, plugin UIs)
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = { "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason", "notify" },
+      pattern = { "help", "lazy", "mason", "notify" },
       callback = function()
         vim.b.miniindentscope_disable = true
       end,
