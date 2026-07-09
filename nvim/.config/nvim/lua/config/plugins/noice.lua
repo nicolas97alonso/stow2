@@ -34,22 +34,9 @@ return {
         },
       })
 
-    -- Align the cmdline ">" color with the cyberdream purple.
-    -- Deferred + on ColorScheme so it wins over noice's own scheduled highlights.
-    local function cmdline_hl()
-      local palette = require("cyberdream.colors")
-      local variant = require("cyberdream.config").options.variant
-      local colors = (variant == "light" or (variant == "auto" and vim.o.background == "light"))
-        and palette.light or palette.default
-      vim.api.nvim_set_hl(0, "NoiceCmdlineIcon", { fg = colors.purple, bg = "NONE" })
-      vim.api.nvim_set_hl(0, "NoiceCmdlineIconSearch", { fg = colors.purple, bg = "NONE" })
-    end
-    vim.schedule(cmdline_hl)
-    vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = function() vim.schedule(cmdline_hl) end })
-
     vim.notify = require("notify")
     require("notify").setup({
-      background_colour = "#000000", -- used for transparency blending
+      background_colour = "NONE", -- inherit the terminal bg instead of blending against black
     })
   end,
   }

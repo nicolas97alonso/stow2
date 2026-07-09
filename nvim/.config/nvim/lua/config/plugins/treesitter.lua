@@ -9,14 +9,14 @@ return {
 
     local parsers = {
       "lua", "python", "sql", "json", "yaml", "markdown", "markdown_inline",
-      "bash", "javascript", "dockerfile", "groovy",
+      "bash", "javascript", "dockerfile", "groovy", "c",
     }
     ts.install(parsers)
 
     vim.api.nvim_create_autocmd("FileType", {
       pattern = {
         "lua", "python", "sql", "json", "yaml", "markdown",
-        "sh", "bash", "javascript", "dockerfile", "groovy",
+        "sh", "bash", "javascript", "dockerfile", "groovy", "c",
       },
       callback = function()
         pcall(vim.treesitter.start)
