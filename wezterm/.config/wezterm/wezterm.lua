@@ -57,11 +57,14 @@ config.colors = {
 
 -- 2. Font configuration with fallback fonts
 config.font = wezterm.font_with_fallback({
-  "Hack Nerd Font",
+  "Hack Nerd Font Mono",
+  "Symbols Nerd Font Mono",
   "JetBrains Mono",
   "Fira Code",
   "Menlo",
 })
+-- Clip square glyphs to their cell; prevents ink bleed into adjacent cells.
+config.allow_square_glyphs_to_overflow_width = "Never"
 config.font_size = 13.0
 
 -- Font spacing adjustments
