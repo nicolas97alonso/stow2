@@ -12,11 +12,11 @@ return {
         defaults = {
           prompt_prefix = "  ",
           selection_caret = " ",
-          path_display = { "truncate" },
+          path_display = { "smart" },
           sorting_strategy = "ascending",
           layout_config = {
             prompt_position = "top",
-            horizontal = { preview_width = 0.55 },
+            horizontal = { preview_width = 0.45 },
           },
           borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
           mappings = {
