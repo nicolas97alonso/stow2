@@ -36,7 +36,7 @@ return {
 
     vim.notify = require("notify")
     require("notify").setup({
-      background_colour = "NONE", -- inherit the terminal bg instead of blending against black
+      background_colour = "#1F1F28",
     })
   end,
   }
