@@ -13,21 +13,21 @@ config.colors = {
   ansi = {
     "#090618", -- Black (sumiInk0)
     "#c34043", -- Red (autumnRed)
-    "#76946a", -- Green (springGreen)
-    "#c0a36e", -- Yellow (boatYellow)
+    "#76946a", -- Green (autumnGreen)
+    "#c0a36e", -- Yellow (boatYellow2)
     "#7e9cd8", -- Blue (crystalBlue)
     "#957fb8", -- Magenta (oniViolet)
-    "#6a9589", -- Cyan (waveBlue1)
+    "#6a9589", -- Cyan (waveAqua1)
     "#c8c093", -- White (oldWhite)
   },
   brights = {
     "#727169", -- Bright Black (fujiGray)
     "#e82424", -- Bright Red (samuraiRed)
-    "#98bb6c", -- Bright Green (autumnGreen)
-    "#e6c384", -- Bright Yellow (roninYellow)
+    "#98bb6c", -- Bright Green (springGreen)
+    "#e6c384", -- Bright Yellow (carpYellow)
     "#7fb4ca", -- Bright Blue (springBlue)
-    "#938aa9", -- Bright Magenta (lightViolet)
-    "#7aa89f", -- Bright Cyan (waveAqua)
+    "#938aa9", -- Bright Magenta (springViolet1)
+    "#7aa89f", -- Bright Cyan (waveAqua2)
     "#dcd7ba", -- Bright White (fujiWhite)
   },
   tab_bar = {
@@ -57,22 +57,25 @@ config.colors = {
 
 -- 2. Font configuration with fallback fonts
 config.font = wezterm.font_with_fallback({
-  "Hack Nerd Font Mono",
+  "GoogleSansCode NFM",
   "Symbols Nerd Font Mono",
-  "JetBrains Mono",
-  "Fira Code",
   "Menlo",
 })
 -- Clip square glyphs to their cell; prevents ink bleed into adjacent cells.
 config.allow_square_glyphs_to_overflow_width = "Never"
 config.font_size = 13.0
 
--- Font spacing adjustments
-config.line_height = 1.15
-config.cell_width = 1.0
+-- GoogleSansCode's natural line box is 1.252em vs Hack's 1.164em, so 1.07 here
+-- reproduces the exact cell height 1.15 gave with Hack (17.4px at 13pt).
+config.line_height = 1.07
+
+-- Lighter hinting; the doc-sanctioned "closer to macOS rendering" target.
+-- Deliberately NOT pairing this with freetype_render_target = "HorizontalLcd",
+-- which cannot set the text alpha channel and would break window transparency.
+config.freetype_load_target = "Light"
 
 -- 3. Transparent & Blurred Background (macOS specific)
-config.window_background_opacity = 0.75
+config.window_background_opacity = 0.9
 config.macos_window_background_blur = 30
 
 -- 4. Borderless window decoration (Hides title bar & buttons, allows resizing)
