@@ -11,16 +11,24 @@ return {
       "lua", "python", "sql", "json", "yaml", "markdown", "markdown_inline",
       "bash", "javascript", "dockerfile", "groovy", "c",
     }
-    ts.install(parsers)
 
+    -- Only hit the network on a cold config; ts.install() otherwise ran on every start.
+    local installed = ts.get_installed()
+    local missing = vim.tbl_filter(function(p)
+      return not vim.tbl_contains(installed, p)
+    end, parsers)
+    if #missing > 0 then
+      ts.install(missing)
+    end
+
+    -- Start on any filetype that has a parser; the pcall handles the ones that
+    -- don't, so this no longer needs a hardcoded list to keep in sync.
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = {
-        "lua", "python", "sql", "json", "yaml", "markdown",
-        "sh", "bash", "javascript", "dockerfile", "groovy", "c",
-      },
+      pattern = "*",
       callback = function()
-        pcall(vim.treesitter.start)
-        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        if pcall(vim.treesitter.start) then
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
       end,
     })
   end,

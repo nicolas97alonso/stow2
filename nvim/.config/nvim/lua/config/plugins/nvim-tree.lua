@@ -2,35 +2,25 @@
 return {
   "nvim-tree/nvim-tree.lua",
   cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFocus", "NvimTreeFindFile" },
-  config = function()
-    require("nvim-tree").setup({
-      view = {
-        adaptive_size = true,      -- Auto adjust width based on content
-        centralize_selection = true,
-      },
-      actions = {
-        open_file = {
-          resize_window = true,    -- Auto resize when opening files
+  keys = {
+    { "<leader>s", function() require("nvim-tree.view").resize() end, desc = "Refit NvimTree width" },
+  },
+  opts = {
+    view = {
+      width = { min = 30 },      -- grow to fit content, never narrower than 30
+      centralize_selection = true,
+    },
+    renderer = {
+      highlight_git = "name",
+      highlight_opened_files = "icon",
+      icons = {
+        show = {
+          file = true,
+          folder = true,
+          folder_arrow = true,
+          git = true,
         },
       },
-      renderer = {
-        highlight_git = true,
-        highlight_opened_files = "icon",
-        icons = {
-          show = {
-            file = true,
-            folder = true,
-            folder_arrow = true,
-            git = true,
-          },
-        },
-      },
-    })
-
-    -- 🔧 Keybinding: auto adjust width manually
-    vim.keymap.set("n", "<leader>s", function()
-      local view = require("nvim-tree.view")
-      view.resize(view.View.width)
-    end, { desc = "Auto adjust NvimTree width" })
-  end,
+    },
+  },
 }

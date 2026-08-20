@@ -1,34 +1,29 @@
 -- lua/config/plugins/lsp.lua
 
-local servers = { "pyright", "ruff", "dockerls", "marksman", "bashls", "clangd" }
+local servers = { "pyright", "ruff", "dockerls", "marksman", "bashls", "clangd", "lua_ls" }
 
 return {
-  -- 🧰 Mason: LSP installer
+  -- 🧰 Mason: LSP + tool installer
   {
-    "williamboman/mason.nvim",
-    cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
-    config = function()
-      require("mason").setup()
-    end,
+    "mason-org/mason.nvim",
+    opts = {},
   },
 
   -- 🔌 Mason LSP Config
   {
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
     event = { "BufReadPre", "BufNewFile" },
-    dependencies = { "williamboman/mason.nvim" },
-    config = function()
-      require("mason-lspconfig").setup({
-        ensure_installed = servers,
-      })
-    end,
+    dependencies = { "mason-org/mason.nvim", "neovim/nvim-lspconfig" },
+    opts = {
+      ensure_installed = servers,
+    },
   },
 
   -- 🧠 LSP Config (new API)
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
-    dependencies = { "hrsh7th/cmp-nvim-lsp" },
+    dependencies = { "saghen/blink.cmp" },
     config = function()
       vim.diagnostic.config({
         virtual_text = false,        -- no inline text; underline only (<leader>d for the message)
@@ -46,14 +41,17 @@ return {
         float = { border = "rounded", source = true },
       })
 
-      -- Apply shared capabilities to all servers. mason-lspconfig auto-enables
-      -- installed servers (automatic_enable = true), so no manual vim.lsp.enable().
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      for _, server in ipairs(servers) do
-        vim.lsp.config(server, { capabilities = capabilities })
-      end
+      -- "*" covers every server, including anything Mason auto-enables that
+      -- isn't in the list above. mason-lspconfig has automatic_enable = true,
+      -- so no manual vim.lsp.enable() is needed.
+      vim.lsp.config("*", {
+        capabilities = require("blink.cmp").get_lsp_capabilities(),
+      })
 
-      -- LSP keymaps, bound only once a server attaches to the buffer
+      -- LSP keymaps, bound only once a server attaches to the buffer.
+      -- Neovim 0.11+ already provides K, grn, gra, grr, gri and grt; these are
+      -- the shorter aliases. Note there is deliberately no bare "gr" — it would
+      -- shadow the built-in gr* prefix and stall every one of them on timeoutlen.
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
           local buf = args.buf
@@ -66,7 +64,7 @@ return {
             vim.keymap.set("n", keys, fn, { buffer = buf, desc = "LSP: " .. desc })
           end
           map("gd", vim.lsp.buf.definition, "Goto Definition")
-          map("gr", vim.lsp.buf.references, "References")
+          map("gR", vim.lsp.buf.references, "References")
           map("gi", vim.lsp.buf.implementation, "Goto Implementation")
           map("K", vim.lsp.buf.hover, "Hover")
           map("<leader>rn", vim.lsp.buf.rename, "Rename")
@@ -83,21 +81,18 @@ return {
     "stevearc/conform.nvim",
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
-    config = function()
-      require("conform").setup({
-        formatters_by_ft = {
-          python = { "black" },
-          lua = { "stylua" },
-          sh = { "shfmt" },
-          bash = { "shfmt" },
-          c = { "clang-format" },
-        },
-        format_on_save = {
-          timeout_ms = 1000,
-          lsp_format = "fallback",
-        },
-      })
-    end,
+    opts = {
+      formatters_by_ft = {
+        python = { "black" },
+        lua = { "stylua" },
+        sh = { "shfmt" },
+        bash = { "shfmt" },
+        c = { "clang-format" },
+      },
+      format_on_save = {
+        timeout_ms = 1000,
+        lsp_format = "fallback",
+      },
+    },
   },
 }
-

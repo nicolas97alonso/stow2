@@ -13,7 +13,8 @@ return {
           prompt_prefix = "  ",
           selection_caret = "> ",
           entry_prefix = "  ",
-          path_display = { "tail" },
+          -- "tail" made every __init__.py / index.js look identical in results.
+          path_display = { "truncate" },
           sorting_strategy = "ascending",
           layout_config = {
             prompt_position = "top",

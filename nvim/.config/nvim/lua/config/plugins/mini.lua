@@ -20,10 +20,10 @@ return {
         animation = require("mini.indentscope").gen_animation.quadratic({ easing = 'out', duration = 500, unit = 'total' }),
       },
     })
-    
+
     -- Disable it on files where it looks ugly (help menus, plugin UIs)
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = { "help", "lazy", "mason", "notify" },
+      pattern = { "help", "lazy", "mason", "notify", "NvimTree", "TelescopePrompt", "noice" },
       callback = function()
         vim.b.miniindentscope_disable = true
       end,

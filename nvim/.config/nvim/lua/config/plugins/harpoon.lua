@@ -12,12 +12,13 @@ return {
       { "<leader>3", function() require("harpoon"):list():select(3) end, desc = "Harpoon file 3" },
       { "<leader>4", function() require("harpoon"):list():select(4) end, desc = "Harpoon file 4" },
     },
-    config = function()
-      require("harpoon"):setup({
-        settings = {
-          save_on_toggle = true,
-          sync_on_ui_close = true,
-        },
-      })
+    config = function(_, opts)
+      require("harpoon"):setup(opts)
     end,
+    opts = {
+      settings = {
+        save_on_toggle = true,
+        sync_on_ui_close = true,
+      },
+    },
   }
