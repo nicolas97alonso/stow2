@@ -1,0 +1,39 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Deliberately minimal: folder, git branch + dirty state, how long the last command
+# took, and a clock on the right. No emoji, no language/runtime version modules.
+#
+# Colors are ANSI names, not hexes, so the prompt follows whatever colorscheme
+# wezterm is running instead of being pinned to one palette.
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$cmd_duration\
+$line_break\
+$character"""
+
+right_format = "$time"
+
+[directory]
+style = "bold cyan"
+truncation_length = 1
+truncate_to_repo = false
+truncation_symbol = ""
+
+[git_branch]
+style = "bold purple"
+
+[git_status]
+style = "bold red"
+
+[cmd_duration]
+min_time = 1000
+style = "bold yellow"
+
+[time]
+disabled = false
+format = "[$time]($style)"
+time_format = "%H:%M"
+style = "bright-black"

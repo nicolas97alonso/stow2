@@ -71,9 +71,9 @@ command -v fzf    >/dev/null && source <(fzf --zsh)
 command -v direnv >/dev/null && eval "$(direnv hook zsh)"
 
 # -----------------------------
-# 8. PROMPT — Oh My Posh
+# 8. PROMPT — Starship
 # -----------------------------
-eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/clean.omp.json)"
+command -v starship >/dev/null && eval "$(starship init zsh)"
 
 # -----------------------------
 # 9. ZSH PLUGINS (autosuggestions, then syntax-highlighting LAST)
