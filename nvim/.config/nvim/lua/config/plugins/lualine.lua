@@ -36,7 +36,7 @@ return {
       options = {
         theme = theme,
         globalstatus = true,
-        disabled_filetypes = { statusline = { "NvimTree" } },
+        disabled_filetypes = { statusline = { "neo-tree" } },
         section_separators   = { left = sep.arrow_right, right = sep.arrow_left },
         component_separators = { left = sep.thin_right,  right = sep.thin_left },
       },

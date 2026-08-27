@@ -1,8 +1,8 @@
 -- Keybinding: jk to escape
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true, desc = "Escape insert mode" })
 
--- nvim-tree keybinding
-vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { noremap = true, silent = true, desc = "Toggle file explorer" })
+-- neo-tree keybinding
+vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { noremap = true, silent = true, desc = "Toggle file explorer" })
 
 -- Telescope keybindings
 vim.keymap.set('n', '<leader>ff', ':Telescope find_files<CR>', { noremap = true, silent = true, desc = "Find files" })

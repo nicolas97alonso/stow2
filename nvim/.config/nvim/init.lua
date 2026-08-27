@@ -4,7 +4,7 @@ vim.filetype.add({ pattern = { ["Jenkinsfile.*"] = "groovy" } })
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- nvim-tree prerequisite: disable netrw so `nvim <dir>` opens the tree, not netrw
+-- neo-tree prerequisite: disable netrw so `nvim <dir>` opens the tree, not netrw
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 

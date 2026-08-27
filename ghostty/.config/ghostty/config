@@ -1,0 +1,120 @@
+# Ghostty mirror of ~/stow/wezterm/.config/wezterm/wezterm.lua
+# Kept intentionally explicit so the two configs stay diffable side by side.
+
+# 1. Kanagawa Wave palette
+# These 16 values are byte-identical to Ghostty's built-in "Kanagawa Wave"
+# theme, but background/cursor/selection below are custom, so the palette is
+# written out rather than using `theme =` to avoid drifting if the built-in
+# theme file changes on upgrade.
+background = 0c0f12
+foreground = dcd7ba
+
+cursor-color = c8c093
+cursor-text = 0c0f12
+# wezterm's cursor_border has no equivalent (no separate cursor outline color).
+
+selection-background = 2d4f67
+selection-foreground = dcd7ba
+
+palette = 0=#090618
+palette = 1=#c34043
+palette = 2=#76946a
+palette = 3=#c0a36e
+palette = 4=#7e9cd8
+palette = 5=#957fb8
+palette = 6=#6a9589
+palette = 7=#c8c093
+palette = 8=#727169
+palette = 9=#e82424
+palette = 10=#98bb6c
+palette = 11=#e6c384
+palette = 12=#7fb4ca
+palette = 13=#938aa9
+palette = 14=#7aa89f
+palette = 15=#dcd7ba
+
+# 2. Font
+# wezterm matches on full name ("GoogleSansCode NFM"), Ghostty on family name.
+font-family = GoogleSansCode Nerd Font Mono
+font-family = Menlo
+font-size = 13
+# wezterm's "Symbols Nerd Font Mono" fallback is a font wezterm ships built-in;
+# it isn't a system font. Not needed here: the Nerd Font carries the icon
+# glyphs, and Ghostty draws powerline/box-drawing from internal sprites, which
+# also makes wezterm's allow_square_glyphs_to_overflow_width unnecessary.
+
+# Approximates wezterm's line_height = 1.07. Not a computed equivalent -- the
+# two renderers derive natural line height differently, so tune by eye.
+# Note the block cursor does NOT scale with this (see adjust-cursor-height).
+adjust-cell-height = 7%
+
+# wezterm's freetype_load_target has no equivalent: Ghostty uses CoreText on
+# macOS, so there is no FreeType hinting knob. If text shows dark fringing
+# against the transparent background, `alpha-blending = linear-corrected` is
+# the knob to try -- it is weight-neutral, not a "lighter text" setting.
+
+# 3. Transparency + blur
+# Changing background-opacity on macOS needs a full quit to take effect, and
+# it is disabled in native fullscreen.
+background-opacity = 0.9
+# wezterm calls its value a pixel radius, Ghostty an intensity (0-255).
+# Same number, not verified to be the same scale -- compare by eye.
+background-blur = 30
+
+# 4. No titlebar, matching wezterm's window_decorations = "RESIZE".
+# Keeps the native frame, rounded corners, resize and native fullscreen.
+# Trade-off: this sets tabbingMode = .disallowed at the AppKit level, so
+# native tabs do not work at all -- cmd+t opens a new window instead, and
+# macOS has no tab-overview fallback (window-show-tab-bar is GTK-only).
+# To get real tabs back, swap this line for:
+#   macos-titlebar-style = tabs
+#   macos-window-buttons = hidden
+# and expect a permanent title strip at the top even with one tab.
+# Also note: the top area can no longer drag the window; drag the frame
+# edges, or enable ctrl+cmd+drag globally with
+#   defaults write -g NSWindowShouldDragOnGesture -bool true
+macos-titlebar-style = hidden
+
+# 5. Window padding.
+# Ghostty's unit is points, wezterm's is pixels, so wezterm's 20 lands at
+# roughly 10 here on a 2x display.
+window-padding-x = 10
+window-padding-y = 10
+window-padding-balance = true
+
+# wezterm's tab bar styling and hide_tab_bar_if_only_one_tab have no
+# equivalent: macOS tabs are native chrome, and they are disabled outright
+# by the hidden titlebar above.
+
+# 6. Steady block cursor.
+# shell-integration's `cursor` feature is on by default and forces a bar at
+# the zsh prompt, which would override this; no-cursor keeps the block. It
+# also avoids the integration leaking a block cursor into fzf widgets.
+cursor-style = block
+cursor-style-blink = false
+shell-integration-features = no-cursor,ssh-env
+
+# 7. wezterm parity for defaults that differ
+# Ghostty resolves macos-option-as-alt to false on non-US layouts (this
+# machine is Spanish - ISO), which breaks alt+b/alt+f in zsh and <M-...> in
+# nvim. `left` matches wezterm's default: left Option = Alt, right Option
+# still composes, so @ # [ ] { } remain typeable.
+macos-option-as-alt = left
+
+# Plain `true` copies to a private Ghostty-only pasteboard on macOS, so
+# selections never reach the system clipboard. `clipboard` writes both.
+copy-on-select = clipboard
+
+mouse-hide-while-typing = true
+quit-after-last-window-closed = true
+resize-overlay = never
+
+# 8. With tabs disabled above, the default tab-cycling binds are dead keys and
+# window cycling has no default bind at all. Remap the muscle memory.
+keybind = super+shift+[=goto_window:previous
+keybind = super+shift+]=goto_window:next
+
+# 9. Don't prompt when closing
+confirm-close-surface = false
+# Ghostty also confirms multi-line pastes, which wezterm does not. Left on as
+# a paste-injection guard; add `clipboard-paste-protection = false` to match.
