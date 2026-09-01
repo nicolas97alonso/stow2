@@ -73,7 +73,8 @@ background-blur = 30
 # Also note: the top area can no longer drag the window; drag the frame
 # edges, or enable ctrl+cmd+drag globally with
 #   defaults write -g NSWindowShouldDragOnGesture -bool true
-macos-titlebar-style = hidden
+macos-titlebar-style = tabs
+macos-window-buttons = hidden
 
 # 5. Window padding.
 # Ghostty's unit is points, wezterm's is pixels, so wezterm's 20 lands at
