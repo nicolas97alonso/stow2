@@ -63,18 +63,24 @@ config.colors = {
 }
 
 -- 2. Font configuration with fallback fonts
+-- "JetBrainsMono NFM" is the Nerd Font Mono build's abbreviated family name
+-- (nameID 1); the full name is "JetBrainsMono Nerd Font Mono". The patched build
+-- rather than plain JetBrains Mono, because lualine's powerline separators,
+-- mini.icons and blink's kind icons all need the Nerd Font glyphs.
 config.font = wezterm.font_with_fallback({
-  "GoogleSansCode NFM",
+  "JetBrainsMono NFM",
   "Symbols Nerd Font Mono",
   "Menlo",
 })
 -- Clip square glyphs to their cell; prevents ink bleed into adjacent cells.
 config.allow_square_glyphs_to_overflow_width = "Never"
-config.font_size = 13.0
+config.font_size = 12.0
 
--- GoogleSansCode's natural line box is 1.252em vs Hack's 1.164em, so 1.07 here
--- reproduces the exact cell height 1.15 gave with Hack (17.4px at 13pt).
-config.line_height = 1.07
+-- No override: JetBrains Mono's natural line box is already 1.3200em (vs
+-- GoogleSansCode's 1.2520em), so 12pt gives a 15.84px cell unaided. This matches
+-- upstream's config, which sets no line-height adjustment at all.
+-- For the old 17.42px cell height instead, use 1.099.
+config.line_height = 1.0
 
 -- Lighter hinting; the doc-sanctioned "closer to macOS rendering" target.
 -- Deliberately NOT pairing this with freetype_render_target = "HorizontalLcd",

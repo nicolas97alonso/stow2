@@ -37,19 +37,21 @@ palette = 14=#96c9a2
 palette = 15=#dacfb7
 
 # 2. Font
-# wezterm matches on full name ("GoogleSansCode NFM"), Ghostty on family name.
-font-family = GoogleSansCode Nerd Font Mono
+# wezterm matches on full name ("JetBrainsMono NFM"), Ghostty on family name.
+# The Nerd Font patched build rather than plain JetBrains Mono: lualine's
+# powerline separators, mini.icons and blink's kind icons need the glyphs.
+font-family = JetBrainsMono Nerd Font Mono
 font-family = Menlo
-font-size = 13
+font-size = 12
 # wezterm's "Symbols Nerd Font Mono" fallback is a font wezterm ships built-in;
 # it isn't a system font. Not needed here: the Nerd Font carries the icon
 # glyphs, and Ghostty draws powerline/box-drawing from internal sprites, which
 # also makes wezterm's allow_square_glyphs_to_overflow_width unnecessary.
 
-# Approximates wezterm's line_height = 1.07. Not a computed equivalent -- the
-# two renderers derive natural line height differently, so tune by eye.
+# No adjust-cell-height: JetBrains Mono's natural 1.3200em line box is used as-is,
+# matching wezterm's line_height = 1.0 and upstream's config, which sets no
+# adjustment either. For the old 17.42px cell height, use 10%.
 # Note the block cursor does NOT scale with this (see adjust-cursor-height).
-adjust-cell-height = 7%
 
 # wezterm's freetype_load_target has no equivalent: Ghostty uses CoreText on
 # macOS, so there is no FreeType hinting knob. If text shows dark fringing
