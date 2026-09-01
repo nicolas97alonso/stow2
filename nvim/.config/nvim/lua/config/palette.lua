@@ -10,12 +10,15 @@
 -- Hardcoded rather than read from the colorscheme plugin: the background is a
 -- deliberate override, so pulling from onedark.nvim's palette would fight it.
 return {
-  bg      = "#0d1b2a", -- navy; also set as the terminal background
-  bg_dark = "#0a151f",
-  surface = "#1a2a3a", -- subtle section background (lualine section b)
+  bg         = "#0d1b2a", -- navy; also set as the terminal background
+  bg_dark    = "#0a151f",
+  surface    = "#1a2a3a", -- subtle section background (lualine section b)
+  surface_hi = "#22354a", -- one step up from surface
+  selection  = "#2a3f52", -- Visual; same value as the terminals' selection_bg
   fg      = "#dcdfe4", -- onehalfdark white
-  grey    = "#5a6b7d", -- comments / muted; onehalfdark #5c6370 shifted navy
-  grey_dim = "#44525f", -- gutter; the reference keeps line numbers below comments
+  grey       = "#5a6b7d", -- comments / muted; onehalfdark #5c6370 shifted navy
+  grey_dim   = "#44525f", -- gutter; the reference keeps line numbers below comments
+  grey_light = "#7a8b9d", -- onedark's light_grey slot
   violet  = "#c678dd", -- onehalfdark purple
   blue    = "#61afef",
   aqua    = "#56b6c2", -- onehalfdark cyan
