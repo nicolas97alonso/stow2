@@ -1,56 +1,62 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
--- 1. Theme / Color Scheme (Kanagawa Wave palette override)
+-- 1. Theme / Color Scheme ("One Half Dark, navy")
+-- The six accents are onehalfdark's verbatim (sonph/onehalf). The background and
+-- the greys are shifted onto a deep navy instead of onehalfdark's warm slate
+-- (#282c34). Mirrored in ghostty/.config/ghostty/config and in nvim's
+-- lua/config/palette.lua -- change all three together.
 config.colors = {
-  foreground = "#dcd7ba",
-  background = "#0c0f12", -- Deep ice-blue-black background
-  cursor_bg = "#c8c093",
-  cursor_border = "#c8c093",
-  cursor_fg = "#0c0f12",
-  selection_bg = "#2d4f67",
-  selection_fg = "#dcd7ba",
+  foreground = "#dcdfe4",
+  background = "#0d1b2a", -- Deep navy background
+  cursor_bg = "#dcdfe4",
+  cursor_border = "#dcdfe4",
+  cursor_fg = "#0d1b2a",
+  selection_bg = "#2a3f52",
+  selection_fg = "#dcdfe4",
   ansi = {
-    "#090618", -- Black (sumiInk0)
-    "#c34043", -- Red (autumnRed)
-    "#76946a", -- Green (autumnGreen)
-    "#c0a36e", -- Yellow (boatYellow2)
-    "#7e9cd8", -- Blue (crystalBlue)
-    "#957fb8", -- Magenta (oniViolet)
-    "#6a9589", -- Cyan (waveAqua1)
-    "#c8c093", -- White (oldWhite)
+    "#1d2836", -- Black (navy-shifted from onehalfdark #282c34)
+    "#e06c75", -- Red
+    "#98c379", -- Green
+    "#e5c07b", -- Yellow
+    "#61afef", -- Blue
+    "#c678dd", -- Magenta (purple)
+    "#56b6c2", -- Cyan
+    "#dcdfe4", -- White
   },
+  -- onehalfdark defines no separate bright set, so these are the accents blended
+  -- 15% toward white. btop/htop lean on brights being distinguishable.
   brights = {
-    "#727169", -- Bright Black (fujiGray)
-    "#e82424", -- Bright Red (samuraiRed)
-    "#98bb6c", -- Bright Green (springGreen)
-    "#e6c384", -- Bright Yellow (carpYellow)
-    "#7fb4ca", -- Bright Blue (springBlue)
-    "#938aa9", -- Bright Magenta (springViolet1)
-    "#7aa89f", -- Bright Cyan (waveAqua2)
-    "#dcd7ba", -- Bright White (fujiWhite)
+    "#5a6b7d", -- Bright Black (comment grey, navy-shifted)
+    "#e5828a", -- Bright Red
+    "#a7cc8d", -- Bright Green
+    "#e9c98f", -- Bright Yellow
+    "#79bbf1", -- Bright Blue
+    "#cf8ce2", -- Bright Magenta
+    "#6fc1cb", -- Bright Cyan
+    "#eef0f3", -- Bright White
   },
   tab_bar = {
-    background = "#0c0f12",
+    background = "#0d1b2a",
     active_tab = {
-      bg_color = "#2d4f67", -- Muted blue active tab
-      fg_color = "#dcd7ba",
+      bg_color = "#2a3f52", -- Muted navy active tab
+      fg_color = "#dcdfe4",
     },
     inactive_tab = {
-      bg_color = "#0c0f12",
-      fg_color = "#727169",
+      bg_color = "#0d1b2a",
+      fg_color = "#5a6b7d",
     },
     inactive_tab_hover = {
-      bg_color = "#2d4f67",
-      fg_color = "#dcd7ba",
+      bg_color = "#2a3f52",
+      fg_color = "#dcdfe4",
     },
     new_tab = {
-      bg_color = "#0c0f12",
-      fg_color = "#dcd7ba",
+      bg_color = "#0d1b2a",
+      fg_color = "#dcdfe4",
     },
     new_tab_hover = {
-      bg_color = "#2d4f67",
-      fg_color = "#dcd7ba",
+      bg_color = "#2a3f52",
+      fg_color = "#dcdfe4",
     },
   },
 }
