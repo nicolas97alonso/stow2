@@ -1,30 +1,29 @@
 -- Single source of truth for colors. Consumed by theme, lualine, blink, incline
 -- and noice so nothing hardcodes hex values.
 --
--- "One Half Dark, navy": the six accents are onehalfdark's verbatim
--- (sonph/onehalf, vim/colors/onehalfdark.vim). The greys and the background are
--- shifted off onehalfdark's warm slate (#282c34) onto a deep navy, which is what
--- the reference screenshots actually measure at (~#111f2c blended through 0.9
--- opacity over a wallpaper).
+-- "Everforest dark, navy": the accents are everforest's dark base palette
+-- verbatim (neanias/everforest-nvim, lua/everforest/colours.lua -> base_palette
+-- .dark). The backgrounds and greys are shifted off everforest's warm forest
+-- grey (#272e33 hard) onto a near-black navy.
 --
 -- Hardcoded rather than read from the colorscheme plugin: the background is a
--- deliberate override, so pulling from onedark.nvim's palette would fight it.
+-- deliberate override, so pulling from everforest's palette would fight it.
 return {
-  bg         = "#0d1b2a", -- navy; also set as the terminal background
-  bg_dark    = "#0a151f",
-  surface    = "#1a2a3a", -- subtle section background (lualine section b)
-  surface_hi = "#22354a", -- one step up from surface
-  selection  = "#2a3f52", -- Visual; same value as the terminals' selection_bg
-  fg      = "#dcdfe4", -- onehalfdark white
-  grey       = "#5a6b7d", -- comments / muted; onehalfdark #5c6370 shifted navy
-  grey_dim   = "#44525f", -- gutter; the reference keeps line numbers below comments
-  grey_light = "#7a8b9d", -- onedark's light_grey slot
-  violet  = "#c678dd", -- onehalfdark purple
-  blue    = "#61afef",
-  aqua    = "#56b6c2", -- onehalfdark cyan
-  green   = "#98c379",
-  yellow  = "#e5c07b",
-  orange  = "#d19a66", -- One Dark's orange; onehalfdark defines none
-  red     = "#e06c75",
-  pink    = "#df6b8a",
+  bg         = "#08111c", -- near-black navy; also set as the terminal background
+  bg_dark    = "#050b13",
+  surface    = "#121d29", -- subtle section background (lualine section b)
+  surface_hi = "#1a2634", -- one step up from surface
+  selection  = "#24313f", -- Visual; same value as the terminals' selection_bg
+  fg         = "#d3c6aa", -- everforest fg
+  grey       = "#7d8b8b", -- comments / muted; everforest grey1 #859289 shifted navy
+  grey_dim   = "#4b5a63", -- gutter; the reference keeps line numbers below comments
+  grey_light = "#9aa8a5", -- everforest grey2 shifted navy
+  violet     = "#d699b6", -- everforest purple
+  blue       = "#7fbbb3", -- everforest blue (reads teal; fields/properties)
+  aqua       = "#83c092", -- everforest aqua
+  green      = "#a7c080",
+  yellow     = "#dbbc7f",
+  orange     = "#e69875",
+  red        = "#e67e80",
+  pink       = "#d699b6",
 }

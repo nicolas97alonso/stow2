@@ -21,7 +21,7 @@ colorscheme. Changing the nvim theme alone will not change the background.
   (`bg_dark` and `pink` are defined but unused). Removing or renaming a key breaks
   the consumers below silently.
 - `plugins/theme.lua` — the colorscheme itself, plus the transparency fixups
-  kanagawa/onedark leave behind: `SignColumn`, `NormalFloat`, `FloatBorder`,
+  everforest leaves behind: `SignColumn`, `NormalFloat`, `FloatBorder`,
   `LineNr`, `CursorLineNr`, and the Noice cmdline groups. Re-applied on a
   `ColorScheme` autocmd.
 - `plugins/lualine.lua` — a hand-built theme table with a distinct mode color for

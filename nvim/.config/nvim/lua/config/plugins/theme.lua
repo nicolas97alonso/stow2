@@ -1,53 +1,57 @@
 return {
-  "navarasu/onedark.nvim",
+  "neanias/everforest-nvim",
+  version = false,
   priority = 1000,
   config = function()
     local c = require("config.palette")
 
-    require("onedark").setup({
-      -- "deep" is the navy-leaning variant, closest to the reference before the
-      -- background override below.
-      style = "deep",
-      transparent = true,
-      term_colors = false, -- the terminal owns its own palette; don't fight it
-      code_style = { comments = "italic" },
-      -- Pull onedark onto palette.lua's values so the plugin and the statusline
-      -- can't drift apart. Every bg/grey slot has to be listed: the "deep" style's
-      -- own backgrounds are purple-indigo (bg3 #2a324a, bg2 #283347) and leak into
-      -- Visual, StatusLine, MatchParen and WinSeparator if left alone.
-      colors = {
-        black = c.bg_dark,
-        bg0 = c.bg,
-        bg1 = c.surface,
-        bg2 = c.surface_hi,
-        bg3 = c.selection,
-        bg_d = c.bg_dark,
-        bg_blue = c.blue,     -- PmenuSel; the style's #54b0fd is off-palette
-        bg_yellow = c.yellow, -- Search; the style's #f2cc81 is off-palette
-        fg = c.fg,
-        grey = c.grey,
-        light_grey = c.grey_light,
-        purple = c.violet,
-        blue = c.blue,
-        cyan = c.aqua,
-        green = c.green,
-        yellow = c.yellow,
-        orange = c.orange,
-        red = c.red,
-      },
-      diagnostics = {
-        -- darker = true muddies the fg down to dark_red #992525, which is
-        -- unreadable on a navy background; background = true adds an off-hue block.
-        darker = false,
-        undercurl = true,
-        background = false,
-      },
+    require("everforest").setup({
+      -- "hard" is the darkest of the three, closest to the navy override below.
+      background = "hard",
+      -- 2 also drops the statusline/signcolumn backgrounds, which is what makes
+      -- the terminal background show through everywhere.
+      transparent_background_level = 2,
+      -- Comments are italic by default (disable_italic_comments = false); this
+      -- flag would also italicise keywords, which the reference does not.
+      italics = false,
+      sign_column_background = "none",
+      ui_contrast = "low",
+      float_style = "dim",
+      -- Pull everforest onto palette.lua's values so the plugin and the
+      -- statusline can't drift apart. Every bg/grey slot has to be listed:
+      -- everforest's own backgrounds are warm forest grey and bg_visual is a
+      -- maroon (#4c3743), which leak into Visual, Pmenu and WinSeparator if
+      -- left alone.
+      colours_override = function(p)
+        p.bg_dim    = c.bg_dark
+        p.bg0       = c.bg
+        p.bg1       = c.surface
+        p.bg2       = c.surface_hi
+        p.bg3       = c.selection
+        p.bg4       = c.selection
+        p.bg5       = c.grey_dim
+        p.bg_visual = c.selection
+        p.grey0     = c.grey_dim
+        p.grey1     = c.grey
+        p.grey2     = c.grey_light
+        p.fg        = c.fg
+        p.red       = c.red
+        p.orange    = c.orange
+        p.yellow    = c.yellow
+        p.green     = c.green
+        p.aqua      = c.aqua
+        p.blue      = c.blue
+        p.purple    = c.violet
+        p.statusline1 = c.green
+        p.statusline2 = c.fg
+        p.statusline3 = c.red
+      end,
     })
 
-    vim.cmd.colorscheme("onedark")
+    vim.cmd.colorscheme("everforest")
 
-    -- Keep the gutter and floats transparent (onedark's transparent mode leaves
-    -- a few of these with a background).
+    -- Keep the gutter and floats transparent (everforest's transparent levels
+    -- leave a few of these with a background).
     local function apply_hl()
       vim.api.nvim_set_hl(0, "SignColumn",   { bg = "NONE" })
       vim.api.nvim_set_hl(0, "NormalFloat",  { bg = "NONE" })
@@ -55,16 +59,16 @@ return {
       -- Kill the gutter/line-number backgrounds left behind in transparent mode
       vim.api.nvim_set_hl(0, "LineNr",       { fg = c.grey_dim, bg = "NONE" })
       vim.api.nvim_set_hl(0, "CursorLineNr", { fg = c.orange, bg = "NONE", bold = true })
-      -- Tabline: onedark ships TabLineSel as a near-solid white block, which
-      -- reads as a hole against the transparent background. mini.tabline is not
-      -- enabled, so these are the groups that actually render on :tabnew.
+      -- Tabline: mini.tabline is not enabled, so these are the groups that
+      -- actually render on :tabnew.
       vim.api.nvim_set_hl(0, "TabLine",     { fg = c.grey, bg = "NONE" })
       vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
       vim.api.nvim_set_hl(0, "TabLineSel",  { fg = c.fg, bg = c.selection, bold = true })
-      -- Cmdline (noice) fully transparent
+      -- Cmdline (noice) fully transparent, green border to match the statusline
       vim.api.nvim_set_hl(0, "NoiceCmdlinePopup",       { bg = "NONE" })
-      vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder", { fg = c.blue, bg = "NONE" })
-      vim.api.nvim_set_hl(0, "NoiceCmdline",            { bg = "NONE" })
+      vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder", { fg = c.green, bg = "NONE" })
+      vim.api.nvim_set_hl(0, "NoiceCmdlineIcon",        { fg = c.green, bg = "NONE" })
+      vim.api.nvim_set_hl(0, "NoiceCmdline",            { fg = c.fg, bg = "NONE" })
     end
     apply_hl()
     vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = apply_hl })

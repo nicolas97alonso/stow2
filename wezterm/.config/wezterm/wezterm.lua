@@ -1,62 +1,63 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
--- 1. Theme / Color Scheme ("One Half Dark, navy")
--- The six accents are onehalfdark's verbatim (sonph/onehalf). The background and
--- the greys are shifted onto a deep navy instead of onehalfdark's warm slate
--- (#282c34). Mirrored in ghostty/.config/ghostty/config and in nvim's
--- lua/config/palette.lua -- change all three together.
+-- 1. Theme / Color Scheme ("Everforest dark, navy")
+-- The accents are everforest's dark base palette verbatim (sainnhe/everforest).
+-- The background and the greys are shifted onto a near-black navy instead of
+-- everforest's warm forest grey (#272e33). Mirrored in
+-- ghostty/.config/ghostty/config and in nvim's lua/config/palette.lua --
+-- change all three together.
 config.colors = {
-  foreground = "#dcdfe4",
-  background = "#0d1b2a", -- Deep navy background
-  cursor_bg = "#dcdfe4",
-  cursor_border = "#dcdfe4",
-  cursor_fg = "#0d1b2a",
-  selection_bg = "#2a3f52",
-  selection_fg = "#dcdfe4",
+  foreground = "#d3c6aa",
+  background = "#08111c", -- Near-black navy background
+  cursor_bg = "#d3c6aa",
+  cursor_border = "#d3c6aa",
+  cursor_fg = "#08111c",
+  selection_bg = "#24313f",
+  selection_fg = "#d3c6aa",
   ansi = {
-    "#1d2836", -- Black (navy-shifted from onehalfdark #282c34)
-    "#e06c75", -- Red
-    "#98c379", -- Green
-    "#e5c07b", -- Yellow
-    "#61afef", -- Blue
-    "#c678dd", -- Magenta (purple)
-    "#56b6c2", -- Cyan
-    "#dcdfe4", -- White
+    "#1a2430", -- Black (navy-shifted from everforest #272e33)
+    "#e67e80", -- Red
+    "#a7c080", -- Green
+    "#dbbc7f", -- Yellow
+    "#7fbbb3", -- Blue (reads teal)
+    "#d699b6", -- Magenta (purple)
+    "#83c092", -- Cyan (aqua)
+    "#d3c6aa", -- White
   },
-  -- onehalfdark defines no separate bright set, so these are the accents blended
+  -- everforest defines no separate bright set, so these are the accents blended
   -- 15% toward white. btop/htop lean on brights being distinguishable.
   brights = {
-    "#5a6b7d", -- Bright Black (comment grey, navy-shifted)
-    "#e5828a", -- Bright Red
-    "#a7cc8d", -- Bright Green
-    "#e9c98f", -- Bright Yellow
-    "#79bbf1", -- Bright Blue
-    "#cf8ce2", -- Bright Magenta
-    "#6fc1cb", -- Bright Cyan
-    "#eef0f3", -- Bright White
+    "#7d8b8b", -- Bright Black (comment grey, navy-shifted)
+    "#ea9193", -- Bright Red
+    "#b4c993", -- Bright Green
+    "#e0c692", -- Bright Yellow
+    "#92c5be", -- Bright Blue
+    "#dca8c1", -- Bright Magenta
+    "#96c9a2", -- Bright Cyan
+    "#dacfb7", -- Bright White
   },
   tab_bar = {
-    background = "#0d1b2a",
+    background = "#08111c",
     active_tab = {
-      bg_color = "#2a3f52", -- Muted navy active tab
-      fg_color = "#dcdfe4",
+      bg_color = "#24313f", -- Muted navy active tab
+      fg_color = "#d3c6aa",
     },
     inactive_tab = {
-      bg_color = "#0d1b2a",
-      fg_color = "#5a6b7d",
+      bg_color = "#08111c",
+      fg_color = "#7d8b8b",
     },
     inactive_tab_hover = {
-      bg_color = "#2a3f52",
-      fg_color = "#dcdfe4",
+      bg_color = "#24313f",
+      fg_color = "#d3c6aa",
     },
     new_tab = {
-      bg_color = "#0d1b2a",
-      fg_color = "#dcdfe4",
+      bg_color = "#08111c",
+      fg_color = "#d3c6aa",
     },
     new_tab_hover = {
-      bg_color = "#2a3f52",
-      fg_color = "#dcdfe4",
+      bg_color = "#24313f",
+      fg_color = "#d3c6aa",
     },
   },
 }

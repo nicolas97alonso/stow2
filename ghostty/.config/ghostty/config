@@ -1,40 +1,40 @@
 # Ghostty mirror of ~/stow/wezterm/.config/wezterm/wezterm.lua
 # Kept intentionally explicit so the two configs stay diffable side by side.
 
-# 1. "One Half Dark, navy" palette
-# The six accents are onehalfdark's verbatim (sonph/onehalf). The background and
-# the greys are shifted onto a deep navy instead of onehalfdark's warm slate
-# (#282c34), so the palette is written out rather than using `theme = OneHalfDark`.
-# Mirrored in wezterm.lua and in nvim's lua/config/palette.lua -- change all
-# three together.
-background = 0d1b2a
-foreground = dcdfe4
+# 1. "Everforest dark, navy" palette
+# The accents are everforest's dark base palette verbatim (sainnhe/everforest).
+# The background and the greys are shifted onto a near-black navy instead of
+# everforest's warm forest grey (#272e33), so the palette is written out rather
+# than using `theme = everforest_dark_hard`. Mirrored in wezterm.lua and in
+# nvim's lua/config/palette.lua -- change all three together.
+background = 08111c
+foreground = d3c6aa
 
-cursor-color = dcdfe4
-cursor-text = 0d1b2a
+cursor-color = d3c6aa
+cursor-text = 08111c
 # wezterm's cursor_border has no equivalent (no separate cursor outline color).
 
-selection-background = 2a3f52
-selection-foreground = dcdfe4
+selection-background = 24313f
+selection-foreground = d3c6aa
 
-palette = 0=#1d2836
-palette = 1=#e06c75
-palette = 2=#98c379
-palette = 3=#e5c07b
-palette = 4=#61afef
-palette = 5=#c678dd
-palette = 6=#56b6c2
-palette = 7=#dcdfe4
-# onehalfdark defines no separate bright set, so 9-15 are the accents blended
+palette = 0=#1a2430
+palette = 1=#e67e80
+palette = 2=#a7c080
+palette = 3=#dbbc7f
+palette = 4=#7fbbb3
+palette = 5=#d699b6
+palette = 6=#83c092
+palette = 7=#d3c6aa
+# everforest defines no separate bright set, so 9-15 are the accents blended
 # 15% toward white. btop/htop lean on brights being distinguishable.
-palette = 8=#5a6b7d
-palette = 9=#e5828a
-palette = 10=#a7cc8d
-palette = 11=#e9c98f
-palette = 12=#79bbf1
-palette = 13=#cf8ce2
-palette = 14=#6fc1cb
-palette = 15=#eef0f3
+palette = 8=#7d8b8b
+palette = 9=#ea9193
+palette = 10=#b4c993
+palette = 11=#e0c692
+palette = 12=#92c5be
+palette = 13=#dca8c1
+palette = 14=#96c9a2
+palette = 15=#dacfb7
 
 # 2. Font
 # wezterm matches on full name ("GoogleSansCode NFM"), Ghostty on family name.

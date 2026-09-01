@@ -16,12 +16,12 @@ return {
     -- Colored mode block, section b subtle bg, section c transparent.
     local theme = {
       normal = {
-        a = { fg = c.bg, bg = c.violet, gui = "bold" },
+        a = { fg = c.bg, bg = c.green, gui = "bold" },
         b = { fg = c.fg, bg = c.surface },
         c = { fg = c.fg, bg = "NONE" },
       },
-      insert   = { a = { fg = c.bg, bg = c.green,  gui = "bold" } },
-      visual   = { a = { fg = c.bg, bg = c.blue,   gui = "bold" } },
+      insert   = { a = { fg = c.bg, bg = c.blue,   gui = "bold" } },
+      visual   = { a = { fg = c.bg, bg = c.violet, gui = "bold" } },
       replace  = { a = { fg = c.bg, bg = c.red,    gui = "bold" } },
       command  = { a = { fg = c.bg, bg = c.yellow, gui = "bold" } },
       terminal = { a = { fg = c.bg, bg = c.aqua,   gui = "bold" } },
