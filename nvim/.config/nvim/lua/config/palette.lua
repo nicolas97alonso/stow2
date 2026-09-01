@@ -9,10 +9,10 @@
 -- Hardcoded rather than read from the colorscheme plugin: the background is a
 -- deliberate override, so pulling from everforest's palette would fight it.
 return {
-  bg         = "#08111c", -- near-black navy; also set as the terminal background
-  bg_dark    = "#050b13",
-  surface    = "#121d29", -- subtle section background (lualine section b)
-  surface_hi = "#1a2634", -- one step up from surface
+  bg         = "#060d16", -- near-black navy; also set as the terminal background
+  bg_dark    = "#03080e",
+  surface    = "#101a25", -- subtle section background (lualine section b)
+  surface_hi = "#18222f", -- one step up from surface
   selection  = "#24313f", -- Visual; same value as the terminals' selection_bg
   fg         = "#d3c6aa", -- everforest fg
   grey       = "#7d8b8b", -- comments / muted; everforest grey1 #859289 shifted navy

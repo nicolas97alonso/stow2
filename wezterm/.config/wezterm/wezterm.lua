@@ -9,10 +9,10 @@ local config = wezterm.config_builder()
 -- change all three together.
 config.colors = {
   foreground = "#d3c6aa",
-  background = "#08111c", -- Near-black navy background
+  background = "#060d16", -- Near-black navy background
   cursor_bg = "#d3c6aa",
   cursor_border = "#d3c6aa",
-  cursor_fg = "#08111c",
+  cursor_fg = "#060d16",
   selection_bg = "#24313f",
   selection_fg = "#d3c6aa",
   ansi = {
@@ -38,13 +38,13 @@ config.colors = {
     "#dacfb7", -- Bright White
   },
   tab_bar = {
-    background = "#08111c",
+    background = "#060d16",
     active_tab = {
       bg_color = "#24313f", -- Muted navy active tab
       fg_color = "#d3c6aa",
     },
     inactive_tab = {
-      bg_color = "#08111c",
+      bg_color = "#060d16",
       fg_color = "#7d8b8b",
     },
     inactive_tab_hover = {
@@ -52,7 +52,7 @@ config.colors = {
       fg_color = "#d3c6aa",
     },
     new_tab = {
-      bg_color = "#08111c",
+      bg_color = "#060d16",
       fg_color = "#d3c6aa",
     },
     new_tab_hover = {

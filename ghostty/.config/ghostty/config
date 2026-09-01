@@ -7,11 +7,11 @@
 # everforest's warm forest grey (#272e33), so the palette is written out rather
 # than using `theme = everforest_dark_hard`. Mirrored in wezterm.lua and in
 # nvim's lua/config/palette.lua -- change all three together.
-background = 08111c
+background = 060d16
 foreground = d3c6aa
 
 cursor-color = d3c6aa
-cursor-text = 08111c
+cursor-text = 060d16
 # wezterm's cursor_border has no equivalent (no separate cursor outline color).
 
 selection-background = 24313f
