@@ -4,13 +4,13 @@ GNU stow packages. From `~/stow`, run `stow <pkg>` to symlink a package into pla
 
 | Package | Symlinks to |
 |---|---|
+| `ghostty` | `~/.config/ghostty/config` |
 | `nvim` | `~/.config/nvim` |
 | `starship` | `~/.config/starship.toml` |
-| `wezterm` | `~/.config/wezterm/wezterm.lua` |
 | `zsh` | `~/.zshrc` (see below) |
 
 ```sh
-cd ~/stow && stow nvim starship wezterm
+cd ~/stow && stow ghostty nvim starship
 ```
 
 ## zsh is per-machine
@@ -42,9 +42,8 @@ cd ~/stow && stow zsh
 
 ## Fonts
 
-WezTerm uses **Google Sans Code Nerd Font Mono** (falls back to Symbols Nerd Font
-Mono, then Menlo). Install:
+Ghostty uses **JetBrainsMono Nerd Font Mono** (falls back to Menlo). Install:
 
 ```sh
-brew install --cask font-googlesanscode-nerd-font
+brew install --cask font-jetbrains-mono-nerd-font
 ```

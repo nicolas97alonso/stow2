@@ -3,8 +3,15 @@
 # Deliberately minimal: folder, git branch + dirty state, how long the last command
 # took, and a clock on the right. No emoji, no language/runtime version modules.
 #
-# Colors are ANSI names, not hexes, so the prompt follows whatever colorscheme
-# wezterm is running instead of being pinned to one palette.
+# The two accents are pinned hexes, taken from the reference prompt's omp.json:
+# lavender #AE8FE7 and grey #454758. #AE8FE7 is deliberately NOT in the
+# One Half Dark palette (its purple is #c678dd), so an ANSI name cannot produce
+# it. Consequence: these two no longer follow the terminal palette. The
+# remaining modules are still ANSI names and do.
+#
+# #454758 measures 1.53:1 against the #282c34 background -- it was a powerline
+# segment *fill* in the reference, not text. #5c6370 (2.32:1) or bright-black
+# are the legible alternatives if the clock is too dim to read.
 
 format = """
 $directory\
@@ -17,13 +24,17 @@ $character"""
 right_format = "$time"
 
 [directory]
-style = "bold cyan"
+style = "bold #AE8FE7"
 truncation_length = 1
 truncate_to_repo = false
 truncation_symbol = ""
 
 [git_branch]
-style = "bold purple"
+# Not the lavender: at 25 degrees of hue from it the branch was indistinguishable
+# from the directory. Cyan sits 74 degrees off the lavender and at least 90 off
+# the red status, yellow duration and green prompt char -- the widest separation
+# available in this palette. 5.91:1 on #282c34.
+style = "bold #56b6c2"
 
 [git_status]
 style = "bold red"
@@ -36,4 +47,4 @@ style = "bold yellow"
 disabled = false
 format = "[$time]($style)"
 time_format = "%H:%M"
-style = "bright-black"
+style = "#454758"

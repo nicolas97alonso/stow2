@@ -1,126 +1,126 @@
-# Ghostty mirror of ~/stow/wezterm/.config/wezterm/wezterm.lua
-# Kept intentionally explicit so the two configs stay diffable side by side.
+# Ghostty is the only terminal config in this repo. Kept intentionally explicit
+# rather than using a bundled `theme =`, because of the two deviations below.
 
-# 1. "Everforest dark, navy" palette
-# The accents are everforest's dark base palette verbatim (sainnhe/everforest).
-# The background and the greys are shifted onto a near-black navy instead of
-# everforest's warm forest grey (#272e33), so the palette is written out rather
-# than using `theme = everforest_dark_hard`. Mirrored in wezterm.lua and in
-# nvim's lua/config/palette.lua -- change all three together.
-background = 060d16
-foreground = d3c6aa
+# 1. "One Half Dark" palette (sonph/onehalf)
+# Accents are upstream verbatim. The background is upstream's #282c34 -- the
+# navy cast comes from background-opacity + blur over a blue-toned wallpaper,
+# NOT from a navy hex baked in here. Mirrored in nvim's lua/config/palette.lua;
+# change both together.
+background = 282c34
+foreground = dcdfe4
 
-cursor-color = d3c6aa
-cursor-text = 060d16
-# wezterm's cursor_border has no equivalent (no separate cursor outline color).
+cursor-color = dcdfe4
+cursor-text = 282c34
 
-selection-background = 24313f
-selection-foreground = d3c6aa
+# Upstream's terminal ports have no usable selection color (the kitty port ships
+# #FFFACD), so this is the `selection` value from its vim colorscheme instead.
+selection-background = 474e5d
+selection-foreground = dcdfe4
 
-palette = 0=#1a2430
-palette = 1=#e67e80
-palette = 2=#a7c080
-palette = 3=#dbbc7f
-palette = 4=#7fbbb3
-palette = 5=#d699b6
-palette = 6=#83c092
-palette = 7=#d3c6aa
-# everforest defines no separate bright set, so 9-15 are the accents blended
-# 15% toward white. btop/htop lean on brights being distinguishable.
-palette = 8=#7d8b8b
-palette = 9=#ea9193
-palette = 10=#b4c993
-palette = 11=#e0c692
-palette = 12=#92c5be
-palette = 13=#dca8c1
-palette = 14=#96c9a2
-palette = 15=#dacfb7
+# Deviation 1: upstream sets black AND brightBlack to #282c34, i.e. both equal
+# the background, which makes anything printed in ANSI black or bright-black
+# invisible. 0 is lifted to onehalf's own non_text; 8 to the value its kitty
+# port uses. Everything else is upstream.
+palette = 0=#373c45
+palette = 1=#e06c75
+palette = 2=#98c379
+palette = 3=#e5c07b
+palette = 4=#61afef
+palette = 5=#c678dd
+palette = 6=#56b6c2
+palette = 7=#dcdfe4
+# Deviation 2: upstream deliberately makes 9-15 identical to 1-7. Kept as
+# upstream despite btop/htop leaning on brights being distinguishable -- the
+# flat look is part of the theme's identity.
+palette = 8=#5d677a
+palette = 9=#e06c75
+palette = 10=#98c379
+palette = 11=#e5c07b
+palette = 12=#61afef
+palette = 13=#c678dd
+palette = 14=#56b6c2
+palette = 15=#dcdfe4
 
 # 2. Font
-# wezterm matches on full name ("JetBrainsMono NFM"), Ghostty on family name.
 # The Nerd Font patched build rather than plain JetBrains Mono: lualine's
 # powerline separators, mini.icons and blink's kind icons need the glyphs.
+# Ghostty matches on family name, and draws powerline/box-drawing from internal
+# sprites, so no Symbols Nerd Font fallback is needed.
 font-family = JetBrainsMono Nerd Font Mono
 font-family = Menlo
 font-size = 12
-# wezterm's "Symbols Nerd Font Mono" fallback is a font wezterm ships built-in;
-# it isn't a system font. Not needed here: the Nerd Font carries the icon
-# glyphs, and Ghostty draws powerline/box-drawing from internal sprites, which
-# also makes wezterm's allow_square_glyphs_to_overflow_width unnecessary.
 
-# No adjust-cell-height: JetBrains Mono's natural 1.3200em line box is used as-is,
-# matching wezterm's line_height = 1.0 and upstream's config, which sets no
-# adjustment either. For the old 17.42px cell height, use 10%.
+# No adjust-cell-height: JetBrains Mono's natural 1.3200em line box is used
+# as-is, matching upstream's config, which sets no adjustment either.
 # Note the block cursor does NOT scale with this (see adjust-cursor-height).
 
-# wezterm's freetype_load_target has no equivalent: Ghostty uses CoreText on
-# macOS, so there is no FreeType hinting knob. If text shows dark fringing
-# against the transparent background, `alpha-blending = linear-corrected` is
-# the knob to try -- it is weight-neutral, not a "lighter text" setting.
+# If text shows dark fringing against the transparent background,
+# `alpha-blending = linear-corrected` is the knob to try -- it is
+# weight-neutral, not a "lighter text" setting.
 
 # 3. Transparency + blur
+# This is what produces the "navy translucent" look: the wallpaper showing
+# through a #282c34 background. A blue/teal wallpaper is part of the aesthetic
+# -- on a neutral or warm wallpaper the theme just reads as flat grey.
 # Changing background-opacity on macOS needs a full quit to take effect, and
 # it is disabled in native fullscreen.
-background-opacity = 0.9
-# wezterm calls its value a pixel radius, Ghostty an intensity (0-255).
-# Same number, not verified to be the same scale -- compare by eye.
-background-blur = 30
+background-opacity = 0.95
+# Ghostty's unit is an intensity (0-255), not a pixel radius.
+background-blur = 20
 
-# 4. No titlebar, matching wezterm's window_decorations = "RESIZE".
-# Keeps the native frame, rounded corners, resize and native fullscreen.
-# Trade-off: this sets tabbingMode = .disallowed at the AppKit level, so
-# native tabs do not work at all -- cmd+t opens a new window instead, and
-# macOS has no tab-overview fallback (window-show-tab-bar is GTK-only).
-# To get real tabs back, swap this line for:
-#   macos-titlebar-style = tabs
-#   macos-window-buttons = hidden
-# and expect a permanent title strip at the top even with one tab.
-# Also note: the top area can no longer drag the window; drag the frame
-# edges, or enable ctrl+cmd+drag globally with
-#   defaults write -g NSWindowShouldDragOnGesture -bool true
+# 4. Native tabs in the titlebar, window buttons hidden.
+# Chosen over a fully hidden titlebar (`macos-titlebar-style = hidden`), which
+# sets tabbingMode = .disallowed at the AppKit level: cmd+t would open a new
+# window and macOS has no tab-overview fallback (window-show-tab-bar is
+# GTK-only). The cost of `tabs` is a permanent title strip at the top even
+# with a single tab.
+# Default is `transparent`.
 macos-titlebar-style = tabs
 macos-window-buttons = hidden
 
-# 5. Window padding.
-# Ghostty's unit is points, wezterm's is pixels, so wezterm's 20 lands at
-# roughly 10 here on a 2x display.
+# 5. Window padding. Ghostty's unit is points, so 10 here is 20px on a 2x
+# display.
 window-padding-x = 10
 window-padding-y = 10
 window-padding-balance = true
 
-# wezterm's tab bar styling and hide_tab_bar_if_only_one_tab have no
-# equivalent: macOS tabs are native chrome, and they are disabled outright
-# by the hidden titlebar above.
+# There is no tab-bar styling to set: macOS tabs are native chrome.
 
 # 6. Steady block cursor.
 # shell-integration's `cursor` feature is on by default and forces a bar at
 # the zsh prompt, which would override this; no-cursor keeps the block. It
 # also avoids the integration leaking a block cursor into fzf widgets.
+# `block` is already the default, kept explicit because of the interaction above.
+# Note this list toggles individual features rather than replacing the set:
+# `ghostty +show-config` resolves it to
+# no-cursor,no-sudo,title,ssh-env,no-ssh-terminfo,path -- only cursor and
+# ssh-env differ from the defaults.
 cursor-style = block
 cursor-style-blink = false
 shell-integration-features = no-cursor,ssh-env
 
-# 7. wezterm parity for defaults that differ
+# 7. Option key
 # Ghostty resolves macos-option-as-alt to false on non-US layouts (this
 # machine is Spanish - ISO), which breaks alt+b/alt+f in zsh and <M-...> in
-# nvim. `left` matches wezterm's default: left Option = Alt, right Option
-# still composes, so @ # [ ] { } remain typeable.
+# nvim. `left` means left Option = Alt while right Option still composes, so
+# @ # [ ] { } remain typeable.
 macos-option-as-alt = left
 
-# Plain `true` copies to a private Ghostty-only pasteboard on macOS, so
-# selections never reach the system clipboard. `clipboard` writes both.
+# Plain `true` prefers the selection clipboard, which on macOS is a private
+# Ghostty pasteboard, so selections never reach the system clipboard.
+# `clipboard` writes both.
 copy-on-select = clipboard
 
 mouse-hide-while-typing = true
 quit-after-last-window-closed = true
 resize-overlay = never
 
-# 8. With tabs disabled above, the default tab-cycling binds are dead keys and
-# window cycling has no default bind at all. Remap the muscle memory.
+# 8. Window cycling has no default bind. These two brackets are free (Ghostty's
+# own tab binds are ctrl+tab / ctrl+shift+tab and super+1..9, all still live).
 keybind = super+shift+[=goto_window:previous
 keybind = super+shift+]=goto_window:next
 
 # 9. Don't prompt when closing
 confirm-close-surface = false
-# Ghostty also confirms multi-line pastes, which wezterm does not. Left on as
-# a paste-injection guard; add `clipboard-paste-protection = false` to match.
+# Multi-line paste confirmation is left on as a paste-injection guard; disable
+# with `clipboard-paste-protection = false`.

@@ -15,12 +15,12 @@ return {
       ["<C-k>"] = { "show_documentation", "hide_documentation", "fallback" },
     },
     appearance = {
-      -- GoogleSansCode NFM is a Nerd Font *Mono* build, so icons are single-width.
+      -- JetBrainsMono NFM is a Nerd Font *Mono* build, so icons are single-width.
       nerd_font_variant = "mono",
     },
     completion = {
       menu = {
-        border = "rounded",
+        -- No `border`: blink falls back to vim.o.winborder (rounded) on 0.11+.
         draw = {
           columns = {
             { "kind_icon" },
@@ -31,7 +31,6 @@ return {
       },
       documentation = {
         auto_show = false, -- toggle with <C-k>
-        window = { border = "rounded" },
       },
       ghost_text = { enabled = true },
     },
@@ -44,30 +43,28 @@ return {
   config = function(_, opts)
     require("blink.cmp").setup(opts)
 
-    -- Transparent-friendly menu: only the selected row carries a solid bg.
+    -- Only the deviations from the colorscheme live here. Everything blink
+    -- default-links to Pmenu / PmenuExtra / PmenuKind / PmenuSbar / NormalFloat
+    -- (Menu, Label, LabelDetail, LabelDescription, Kind, ScrollBarGutter, Doc,
+    -- SignatureHelp) is styled once in theme.lua's `highlights` instead.
+    -- Note: a definition consisting only of `bg = "NONE"` collapses to an empty
+    -- group and blink's `default link` wins, so transparency has to come from
+    -- the link target, not from restating it here.
     local function blink_highlights()
       local c = require("config.palette")
       local set = vim.api.nvim_set_hl
-      set(0, "BlinkCmpMenu", { fg = c.fg, bg = "NONE" })
       set(0, "BlinkCmpMenuBorder", { fg = c.grey, bg = "NONE" })
       set(0, "BlinkCmpMenuSelection", { fg = c.bg, bg = c.violet, bold = true })
       set(0, "BlinkCmpScrollBarThumb", { bg = c.surface })
-      set(0, "BlinkCmpScrollBarGutter", { bg = "NONE" })
-      set(0, "BlinkCmpDoc", { fg = c.fg, bg = "NONE" })
       set(0, "BlinkCmpDocBorder", { fg = c.grey, bg = "NONE" })
       set(0, "BlinkCmpDocSeparator", { fg = c.grey, bg = "NONE" })
       set(0, "BlinkCmpDocCursorLine", { bg = c.surface })
-      set(0, "BlinkCmpSignatureHelp", { fg = c.fg, bg = "NONE" })
       set(0, "BlinkCmpSignatureHelpBorder", { fg = c.grey, bg = "NONE" })
       set(0, "BlinkCmpSignatureHelpActiveParameter", { fg = c.orange, bold = true })
       set(0, "BlinkCmpGhostText", { fg = c.grey, bg = "NONE", italic = true })
-      set(0, "BlinkCmpLabel", { fg = c.fg, bg = "NONE" })
       set(0, "BlinkCmpLabelDeprecated", { fg = c.grey, bg = "NONE", strikethrough = true })
       set(0, "BlinkCmpLabelMatch", { fg = c.blue, bg = "NONE", bold = true })
-      set(0, "BlinkCmpLabelDetail", { fg = c.grey, bg = "NONE" })
-      set(0, "BlinkCmpLabelDescription", { fg = c.grey, bg = "NONE" })
       set(0, "BlinkCmpSource", { fg = c.grey, bg = "NONE", italic = true })
-      set(0, "BlinkCmpKind", { fg = c.violet, bg = "NONE" })
       set(0, "BlinkCmpKindFunction", { fg = c.violet, bg = "NONE" })
       set(0, "BlinkCmpKindMethod", { fg = c.violet, bg = "NONE" })
       set(0, "BlinkCmpKindVariable", { fg = c.blue, bg = "NONE" })
@@ -80,6 +77,9 @@ return {
       set(0, "BlinkCmpKindProperty", { fg = c.aqua, bg = "NONE" })
     end
     blink_highlights()
-    vim.api.nvim_create_autocmd("ColorScheme", { callback = blink_highlights })
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      group = vim.api.nvim_create_augroup("blink_highlights", { clear = true }),
+      callback = blink_highlights,
+    })
   end,
 }

@@ -2,6 +2,8 @@
 return {
   "b0o/incline.nvim",
   event = "BufReadPre",
+  -- render() calls mini.icons directly.
+  dependencies = { "echasnovski/mini.nvim" },
   config = function()
     local c = require("config.palette")
 
@@ -14,12 +16,11 @@ return {
       hide = {
         cursorline = true,
       },
-      highlight = {
-        groups = {
-          InclineNormal   = { guifg = c.fg,   guibg = "None" },
-          InclineNormalNC = { guifg = c.grey, guibg = "None" },
-        },
-      },
+      -- InclineNormal / InclineNormalNC are set in theme.lua's `highlights`.
+      -- Passing them here instead merges them onto incline's
+      -- `{ group = "NormalFloat", default = true }` default and emits a legacy
+      -- `:highlight ... link ...` command, which drops guibg and leaves the
+      -- inactive label with an opaque background.
       render = function(props)
         local bufname = vim.api.nvim_buf_get_name(props.buf)
         local filename = bufname ~= "" and vim.fn.fnamemodify(bufname, ":t") or "[No Name]"
@@ -29,15 +30,15 @@ return {
 
         local diag_colors = {
           [vim.diagnostic.severity.ERROR] = c.red,
-          [vim.diagnostic.severity.WARN]  = c.yellow,
-          [vim.diagnostic.severity.INFO]  = c.blue,
-          [vim.diagnostic.severity.HINT]  = c.aqua,
+          [vim.diagnostic.severity.WARN] = c.yellow,
+          [vim.diagnostic.severity.INFO] = c.blue,
+          [vim.diagnostic.severity.HINT] = c.aqua,
         }
         local diag_signs = {
           [vim.diagnostic.severity.ERROR] = " ",
-          [vim.diagnostic.severity.WARN]  = " ",
-          [vim.diagnostic.severity.INFO]  = " ",
-          [vim.diagnostic.severity.HINT]  = " ",
+          [vim.diagnostic.severity.WARN] = " ",
+          [vim.diagnostic.severity.INFO] = " ",
+          [vim.diagnostic.severity.HINT] = " ",
         }
 
         local res = { { icon, guifg = icon_hl }, " ", { filename } }
