@@ -8,8 +8,18 @@ return {
     local ts = require("nvim-treesitter")
 
     local parsers = {
-      "lua", "python", "sql", "json", "yaml", "markdown", "markdown_inline",
-      "bash", "javascript", "dockerfile", "groovy", "c",
+      "lua",
+      "python",
+      "sql",
+      "json",
+      "yaml",
+      "markdown",
+      "markdown_inline",
+      "bash",
+      "javascript",
+      "dockerfile",
+      "groovy",
+      "c",
     }
 
     -- Only hit the network on a cold config; ts.install() otherwise ran on every start.
@@ -24,6 +34,7 @@ return {
     -- Start on any filetype that has a parser; the pcall handles the ones that
     -- don't, so this no longer needs a hardcoded list to keep in sync.
     vim.api.nvim_create_autocmd("FileType", {
+      group = vim.api.nvim_create_augroup("treesitter_start", { clear = true }),
       pattern = "*",
       callback = function()
         if pcall(vim.treesitter.start) then

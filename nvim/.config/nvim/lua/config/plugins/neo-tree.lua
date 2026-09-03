@@ -7,6 +7,9 @@ return {
     "nvim-lua/plenary.nvim",
     "MunifTanjim/nui.nvim",
   },
+  keys = {
+    { "<leader>e", "<cmd>Neotree toggle<cr>", desc = "Toggle file explorer" },
+  },
   opts = {
     filesystem = {
       hijack_netrw_behavior = "open_current",

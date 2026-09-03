@@ -1,0 +1,7 @@
+# conform runs stylua on save. Without this, stylua's defaults (tabs, width 4)
+# would retab the whole config, which init.lua sets to 2 spaces for lua.
+# Lives inside the nvim package so it is found through the ~/.config/nvim
+# symlink as well as through ~/stow/nvim/.config/nvim.
+indent_type = "Spaces"
+indent_width = 2
+column_width = 120

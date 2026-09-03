@@ -2,11 +2,23 @@
 
 local servers = { "pyright", "ruff", "dockerls", "marksman", "bashls", "clangd", "lua_ls" }
 
+-- mason-lspconfig's ensure_installed only accepts LSP servers, so the conform
+-- formatters below need their own installer or they silently never appear.
+local tools = { "black", "stylua", "shfmt", "clang-format" }
+
 return {
   -- 🧰 Mason: LSP + tool installer
   {
     "mason-org/mason.nvim",
     opts = {},
+  },
+
+  -- 🛠️ Mason tool installer: the formatters conform shells out to
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    event = "VeryLazy",
+    dependencies = { "mason-org/mason.nvim" },
+    opts = { ensure_installed = tools },
   },
 
   -- 🔌 Mason LSP Config
@@ -26,16 +38,16 @@ return {
     dependencies = { "saghen/blink.cmp" },
     config = function()
       vim.diagnostic.config({
-        virtual_text = false,        -- no inline text; underline only (<leader>d for the message)
+        virtual_text = false, -- no inline text; underline only (<leader>d for the message)
         underline = true,
         severity_sort = true,
         update_in_insert = false,
         signs = {
           text = {
             [vim.diagnostic.severity.ERROR] = "",
-            [vim.diagnostic.severity.WARN]  = "",
-            [vim.diagnostic.severity.INFO]  = "",
-            [vim.diagnostic.severity.HINT]  = "",
+            [vim.diagnostic.severity.WARN] = "",
+            [vim.diagnostic.severity.INFO] = "",
+            [vim.diagnostic.severity.HINT] = "",
           },
         },
         float = { border = "rounded", source = true },
@@ -53,6 +65,7 @@ return {
       -- the shorter aliases. Note there is deliberately no bare "gr" — it would
       -- shadow the built-in gr* prefix and stall every one of them on timeoutlen.
       vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("lsp_keymaps", { clear = true }),
         callback = function(args)
           local buf = args.buf
           local client = vim.lsp.get_client_by_id(args.data.client_id)
@@ -69,8 +82,12 @@ return {
           map("K", vim.lsp.buf.hover, "Hover")
           map("<leader>rn", vim.lsp.buf.rename, "Rename")
           map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
-          map("[d", function() vim.diagnostic.jump({ count = -1 }) end, "Prev Diagnostic")
-          map("]d", function() vim.diagnostic.jump({ count = 1 }) end, "Next Diagnostic")
+          map("[d", function()
+            vim.diagnostic.jump({ count = -1 })
+          end, "Prev Diagnostic")
+          map("]d", function()
+            vim.diagnostic.jump({ count = 1 })
+          end, "Next Diagnostic")
         end,
       })
     end,
