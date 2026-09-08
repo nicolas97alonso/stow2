@@ -36,15 +36,22 @@ return {
       options = {
         theme = theme,
         globalstatus = true,
-        disabled_filetypes = { statusline = { "neo-tree" } },
+        -- NOT `disabled_filetypes`: with globalstatus there is one bar for the
+        -- whole editor, and lualine returns nil for it when the focused window's
+        -- filetype is disabled -- which blanks the statusline editor-wide the
+        -- moment the tree takes focus. `extensions` is the globalstatus-safe way
+        -- to special-case a filetype.
         section_separators = { left = sep.arrow_right, right = sep.arrow_left },
         component_separators = { left = sep.thin_right, right = sep.thin_left },
       },
+      extensions = { "neo-tree", "fugitive", "lazy", "mason" },
       sections = {
         lualine_a = { "mode" },
         lualine_b = { "branch", "diff", "diagnostics" },
         lualine_c = { { "filename", path = 1 } },
-        lualine_x = { "encoding", "fileformat", "filetype" },
+        -- No `encoding` / `fileformat`: both are permanent constants here
+        -- (utf-8 / unix), so they were two segments of pure noise.
+        lualine_x = { "filetype" },
         lualine_y = { "progress" },
         lualine_z = { "location" },
       },

@@ -13,12 +13,25 @@
 # segment *fill* in the reference, not text. #5c6370 (2.32:1) or bright-black
 # are the legible alternatives if the clock is too dim to read.
 
+# Density: on a two-line prompt the blank line starship adds above it is wasted
+# vertical space.
+add_newline = false
+
+# An explicit `format` suppresses every module not listed, including the ones
+# starship enables by default. $git_state and $jobs are listed for that reason
+# alone: without them REBASING/MERGING/CHERRY-PICKING and a backgrounded
+# `uv run ... &` are invisible. [jobs] needs no section of its own -- its default
+# symbol is U+2726 (a dingbat, not an emoji) and threshold is 1, so it only
+# renders when a job is actually backgrounded.
 format = """
 $directory\
 $git_branch\
+$git_state\
 $git_status\
 $cmd_duration\
+$jobs\
 $line_break\
+$status\
 $character"""
 
 right_format = "$time"
@@ -36,12 +49,30 @@ truncation_symbol = ""
 # available in this palette. 5.91:1 on #282c34.
 style = "bold #56b6c2"
 
+[git_state]
+# One Half Dark's purple, which no other module here uses -- so the state can't
+# be confused with the cyan branch, the red status or the yellow duration. The
+# default `bold yellow` would collide with cmd_duration.
+# The format itself is left at the default:
+# '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bold #c678dd"
+
 [git_status]
 style = "bold red"
 
 [cmd_duration]
 min_time = 1000
 style = "bold yellow"
+
+[status]
+# Off by default, and its default symbols are emoji (❌ 🔍 🧱 ⚡), so the format
+# is overridden to drop $symbol and print the bare exit code.
+# This only adds the number. It is not a fix for silent failures: [character]'s
+# error_symbol is already `[❯](bold red)`, so a non-zero exit is visible without
+# this module.
+disabled = false
+format = "[$status]($style) "
+style = "bold red"
 
 [time]
 disabled = false

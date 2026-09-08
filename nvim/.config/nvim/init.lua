@@ -8,6 +8,13 @@ vim.g.maplocalleader = " "
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- Remote-plugin hosts. Nothing here uses any of them, and leaving them enabled
+-- is 6 checkhealth warnings about missing perl/ruby/npm/python host packages.
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+vim.g.loaded_python3_provider = 0
+
 -- Basic Functions
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -47,6 +54,23 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Restore the cursor to where it was when the file was last closed. undofile
+-- already persists the history; this persists the position.
+vim.api.nvim_create_autocmd("BufReadPost", {
+  group = vim.api.nvim_create_augroup("restore_cursor", { clear = true }),
+  callback = function(args)
+    -- Commit buffers are new every time; jumping into the previous message's
+    -- position is never what you want.
+    if vim.tbl_contains({ "gitcommit", "gitrebase" }, vim.bo[args.buf].filetype) then
+      return
+    end
+    local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
+    if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(args.buf) then
+      pcall(vim.api.nvim_win_set_cursor, 0, mark)
+    end
+  end,
+})
+
 -- Bootstrap Lazy.nvim plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -69,6 +93,11 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Load all plugin specs from lua/config/plugins/
-require("lazy").setup({ { import = "config.plugins" } })
+require("lazy").setup({
+  spec = { { import = "config.plugins" } },
+  -- No plugin here needs luarocks; without this `:checkhealth lazy` reports a
+  -- hererocks ERROR while simultaneously saying no plugin requires it.
+  rocks = { enabled = false },
+})
 
 require("config.keymaps")

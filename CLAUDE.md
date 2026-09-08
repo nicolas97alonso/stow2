@@ -11,10 +11,73 @@ package so stylua finds it through the `~/.config/nvim` symlink too. Without it
 stylua's default (tabs) would retab everything. Run `stylua .` from
 `nvim/.config/nvim` after hand-editing; `stylua --check .` should be clean.
 
-The formatters conform shells out to (`black stylua shfmt clang-format`) are
-declared in `plugins/lsp.lua`'s `tools` list and installed by mason-tool-installer.
-mason-lspconfig's `ensure_installed` only accepts LSP servers — adding a formatter
-there does nothing.
+## LSP: there is no mason-lspconfig
+
+`plugins/lsp.lua` uses **native `vim.lsp.config` / `vim.lsp.enable` only**. mason-lspconfig
+was removed; do not add it back. Two reasons, both measured:
+
+1. It cost 19 ms — a third of all plugin load time.
+2. Its `automatic_enable = true` enables *any installed Mason package that
+   nvim-lspconfig has an `lsp/` file for*. nvim-lspconfig ships `lsp/stylua.lua`,
+   so the `stylua` **formatter** was being started as a second LSP client on every
+   Lua buffer, alongside `lua_ls`. Verified with `vim.lsp.get_clients()`.
+
+That is why the file has **two name lists in one table**: `vim.lsp.enable()` takes
+nvim-lspconfig's config name, `mason-tool-installer` takes the Mason registry name,
+and they differ often (`dockerls` / `dockerfile-language-server`, `lua_ls` /
+`lua-language-server`, `jsonls` / `json-lsp`). Keep them in the one `servers` table
+so they can't drift. Formatters live in a **separate** `formatters` list precisely
+so they can never be passed to `vim.lsp.enable()`.
+
+### `format_on_save` uses `lsp_format = "never"` on purpose
+
+Not `"fallback"`. With `"fallback"`, every filetype that has an LSP but no
+`formatters_by_ft` entry gets formatted by that LSP on save. yamlls bundles
+prettier and advertises `documentFormattingProvider`, so `"fallback"` would have
+enrolled all 663 `.yml` files in the dbt repo into prettier-on-save — 481 of them
+change substantively, and `dbt_project.yml` loses its whole aligned-comment block.
+`yamlls` additionally has `yaml.format.enable = false` as a second guard.
+`<leader>cf` is the opt-in path and is the only place `lsp_format = "fallback"`
+appears.
+
+### There is deliberately no SQL formatter or SQL LSP
+
+This is the most surprising omission given the repo is mostly T-SQL, so: it was
+measured, not overlooked.
+
+- **sqlfluff cannot template these models.** 25/25 real models fail with
+  `Undefined jinja template variable`. Resolving the project's macros needs
+  `templater = dbt`, and the brew sqlfluff only offers
+  `raw/jinja/python/placeholder`. Same reason sqlfluff-as-a-linter via nvim-lint
+  is dead — it emits one templating error per file and nothing else.
+- **shandy-sqlfmt handles the Jinja but rewrites the codebase.** 699 of 748 files
+  change: it lowercases every identifier and moves leading commas to trailing,
+  which is the exact opposite of the project's own `.sqlfluff`
+  (`extended_capitalisation_policy = pascal`, `line_position = leading`). 8 macro
+  files fail its token-safety check.
+- **`sqlfmt` is also ambiguous on this machine**: `~/homebrew/bin/sqlfmt` is the Go
+  `sqlfum.pt` and shadows the pipx-installed shandy-sqlfmt, so a bare `"sqlfmt"` in
+  conform runs the wrong binary.
+- Both `sqls` and `sqlls` are connection-oriented (they want live Azure SQL
+  credentials) and neither can parse an uncompiled Jinja template.
+
+The only working path is `sqlfluff` + `sqlfluff-templater-dbt` inside the project's
+own venv, which needs a live dbt profile and runs at seconds per file. That belongs
+to the project, not to this config.
+
+### dbt `.sql` files: the broken treesitter parse is the best available option
+
+Every dbt model reports `has_error = true` from the `sql` parser, because it chokes
+on `{{ }}`. It still highlights 77–86% of lines, and the errors are localised to the
+Jinja spans. A `jinja.sql` compound filetype is **strictly worse**:
+`vim.treesitter.language.get_lang("jinja.sql")` resolves to `jinja` (nvim splits on
+the dot), and jinja's `highlights.scm` covers only Jinja tags — you'd get a clean
+parse and zero SQL highlighting. Leave it alone.
+
+## Formatters conform shells out to
+
+`black stylua shfmt clang-format`, declared in `plugins/lsp.lua`'s `formatters` list
+and installed by mason-tool-installer alongside the servers.
 
 ## Changing the theme / colorscheme
 

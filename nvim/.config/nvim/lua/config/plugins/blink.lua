@@ -1,10 +1,13 @@
 -- 🤖 Autocompletion: blink.cmp
 -- Replaces nvim-cmp + cmp-nvim-lsp + cmp-buffer + cmp-path + cmp_luasnip
 -- + LuaSnip + lspkind: fuzzy matching, snippets and kind icons are built in.
+-- Note on laziness: this is a dependency of nvim-lspconfig (it supplies
+-- get_lsp_capabilities()), so it actually loads on BufReadPre, not on
+-- InsertEnter. Kept declared as a dependency rather than eager here; there is no
+-- `event` because it would be a lie.
 return {
   "saghen/blink.cmp",
   version = "1.*",
-  event = "InsertEnter",
   dependencies = { "rafamadriz/friendly-snippets" },
   opts = {
     keymap = {
@@ -39,7 +42,6 @@ return {
     },
     fuzzy = { implementation = "prefer_rust_with_warning" },
   },
-  opts_extend = { "sources.default" },
   config = function(_, opts)
     require("blink.cmp").setup(opts)
 

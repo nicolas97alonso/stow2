@@ -2,11 +2,11 @@
 # rather than using a bundled `theme =`, because of the two deviations below.
 
 # 1. "One Half Dark" palette (sonph/onehalf)
-# Accents are upstream verbatim. The background is upstream's #282c34 -- the
-# navy cast comes from background-opacity + blur over a blue-toned wallpaper,
-# NOT from a navy hex baked in here. Mirrored in nvim's lua/config/palette.lua;
-# change both together.
-background = 282c34
+# Accents are upstream verbatim. The background was upstream's #282c34, darkened
+# to #1a1c22 by request -- the navy cast comes from background-opacity + blur
+# over a blue-toned wallpaper, NOT from a navy hex baked in here. Mirrored in
+# nvim's lua/config/palette.lua; change both together.
+background = 1a1c22
 foreground = dcdfe4
 
 cursor-color = dcdfe4
@@ -48,7 +48,10 @@ palette = 15=#dcdfe4
 # sprites, so no Symbols Nerd Font fallback is needed.
 font-family = JetBrainsMono Nerd Font Mono
 font-family = Menlo
-font-size = 12
+font-size = 13
+# The installed JetBrainsMono Nerd Font Mono face exposes a `zero` GSUB feature.
+# Slashed zero disambiguates 0 from O in hashes, run IDs and cluster names.
+font-feature = zero
 
 # No adjust-cell-height: JetBrains Mono's natural 1.3200em line box is used
 # as-is, matching upstream's config, which sets no adjustment either.
@@ -115,12 +118,50 @@ mouse-hide-while-typing = true
 quit-after-last-window-closed = true
 resize-overlay = never
 
-# 8. Window cycling has no default bind. These two brackets are free (Ghostty's
-# own tab binds are ctrl+tab / ctrl+shift+tab and super+1..9, all still live).
-keybind = super+shift+[=goto_window:previous
-keybind = super+shift+]=goto_window:next
+# 8. Window cycling. `goto_window` has no default bind at all
+# (`+list-keybinds --default | grep goto_window` is empty). super+shift+[ and
+# super+shift+] are NOT free -- they are the defaults for previous_tab/next_tab,
+# so binding them here would silently shadow tab switching. ctrl+brackets are
+# unbound in the defaults, and the tab binds (ctrl+tab / ctrl+shift+tab,
+# super+shift+brackets, super+1..9) all stay live.
+keybind = super+ctrl+[=goto_window:previous
+keybind = super+ctrl+]=goto_window:next
 
 # 9. Don't prompt when closing
 confirm-close-surface = false
 # Multi-line paste confirmation is left on as a paste-injection guard; disable
 # with `clipboard-paste-protection = false`.
+
+# 10. Command-finish notifications (Ghostty 1.3.0+), for long dbt / azure-cli /
+# databricks runs. `unfocused` means it only fires when the surface running the
+# command is not focused, so foreground work stays silent. Requires OSC 133
+# command marks, which shell-integration already provides (section 6).
+# Deviations from the defaults: never -> unfocused, bell,no-notify ->
+# no-bell,notify (a macOS notification instead of an audible bell), 5s -> 30s so
+# ordinary commands don't generate noise.
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = no-bell,notify
+notify-on-command-finish-after = 30s
+
+# 11. Quick terminal drop-down. toggle_quick_terminal has no default bind, and
+# nothing in the defaults uses the backtick key. The key name is `backquote`
+# (W3C code); `grave` is rejected with error.InvalidFormat in 1.3.1.
+# `global:` means the key is captured system-wide rather than only when Ghostty
+# is focused, which on macOS needs Accessibility permission (System Settings ->
+# Privacy & Security -> Accessibility); Ghostty prompts for it on launch/reload
+# and the bind silently does nothing until it is granted.
+# No quick-terminal-* options here: the defaults (position top, autohide true,
+# animation-duration 0.2) are already what's wanted.
+keybind = global:super+backquote=toggle_quick_terminal
+
+# 12. Scrollback. The unit is bytes and the limit is per terminal surface; the
+# default 10000000 (10MB) truncates large query dumps. Scrollback is allocated
+# lazily up to this limit, so the memory cost is only paid once it is actually
+# filled.
+scrollback-limit = 100000000
+
+# 13. Per-machine overrides. The `?` prefix makes a missing file non-fatal, and
+# the path is relative to this file, so this reads ./local next to the config if
+# it exists. Loaded after everything above, so it wins. Intentionally not
+# tracked, mirroring the .zshrc / .zshrc.example split in this repo.
+config-file = ?local

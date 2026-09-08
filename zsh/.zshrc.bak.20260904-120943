@@ -1,16 +1,12 @@
-# Template. Copy to zsh/.zshrc and edit for this machine (see README).
-# Machine-specific bits are parameterised through HOMEBREW_PREFIX rather than
-# hardcoded, so the only things that normally need editing are the aliases.
-: ${HOMEBREW_PREFIX:=$HOME/homebrew}
-
 # -----------------------------
 # 1. PATHS
 # -----------------------------
-# Homebrew goes on PATH *here*, not only in ~/.zprofile: .zprofile runs for login
-# shells only, and in a nested or non-login interactive zsh the `command -v`
-# guards in section 7 would then silently no-op -- no prompt, no zoxide, no fzf,
-# no nvim. typeset -U dedups any overlap with .zprofile.
-export PATH="$HOMEBREW_PREFIX/bin:$HOME/.local/bin:$PATH"
+# Homebrew is also exported from ~/.zprofile, but that only runs for *login*
+# shells. Repeating it here means a nested or non-login interactive zsh still
+# finds brew -- without it the `command -v` guards in section 7 silently no-op
+# and you get no prompt, no zoxide, no fzf, no nvim. typeset -U dedups the
+# overlap.
+export PATH="$HOME/homebrew/bin:$HOME/.local/bin:$PATH"
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 typeset -U path PATH   # dedup PATH
 
@@ -22,13 +18,12 @@ export HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications"
 # 2. COMPLETIONS
 # -----------------------------
 # Wire Homebrew's completion definitions (_uv, _az, _gh, _sqlfluff, ...) then init.
-fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
+fpath=("$HOME/homebrew/share/zsh/site-functions" $fpath)
 # Cache compinit: full rebuild at most once a day, otherwise fast load (-C skips the scan).
 setopt EXTENDED_GLOB   # needed for the (#q...) glob qualifier below
 autoload -Uz compinit
-# Glob into an array -- a glob qualifier does NOT expand inside [[ ]], it stays
-# literal there and the test is then always true. Match the dump only if older
-# than 24h: match -> full rebuild, else fast load (-C).
+# Glob into an array (it won't fire inside [[ ]], where it stays literal): match
+# the dump only if older than 24h. Match -> full rebuild; else fast load (-C).
 _zdump=(~/.zcompdump(#qNmh+24))
 if (( ${#_zdump} )); then
   compinit
@@ -49,7 +44,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'   # case-insensitive
 HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=50000
-# HIST_FCNTL_LOCK: SHARE_HISTORY across several terminal tabs means concurrent
+# HIST_FCNTL_LOCK: SHARE_HISTORY across several Ghostty tabs means concurrent
 # writes to one 50k-line file; fcntl locking is what stops them interleaving.
 setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS \
        HIST_IGNORE_SPACE HIST_REDUCE_BLANKS HIST_FCNTL_LOCK
@@ -58,26 +53,39 @@ setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS \
 # 4. SHELL OPTIONS
 # -----------------------------
 # EXTENDED_GLOB is already set in section 2 (the compinit glob needs it there).
-# GLOB_DOTS makes * match dotfiles -- convenient, but it means `rm *` includes
-# .git and .env. Drop it if that trade isn't wanted.
 setopt AUTO_CD INTERACTIVE_COMMENTS GLOB_DOTS
 
 # -----------------------------
-# 5. ALIASES  (edit these per machine)
+# 5. ALIASES
 # -----------------------------
 alias desktop="cd ~/Desktop"
 alias repos="cd ~/code"
+alias ir="cd ~/code/all/are-strada-ir-dwh/"
 alias home="cd ~"
+alias fut="cd ~/code/projects/de-football/"
+alias db="cd /Users/nicolas.alonso/code/projects/databricksdemo"
+
+# ADF Monitor — installed as `adf` via `uv tool install --editable ~/code/projects/adf-monitor`
+# `adf` = yesterday digest, `adf failures --investigate` = root-cause analysis
+alias adf-digest='adf yesterday'
 alias pyclean='find . -type d -name "__pycache__" -exec rm -rf {} +'
 
-# eza for ls. --group-directories-first is the only real behaviour change.
+# eza for ls. --group-directories-first is the only real behaviour change; the
+# rest is the same information ls gives, just aligned and coloured.
 alias ls='eza --group-directories-first'
 alias ll='eza -l --group-directories-first --git'
 alias la='eza -la --group-directories-first --git'
 alias lt='eza --tree --level=2 --group-directories-first'
 
-# --paging=never keeps `cat` non-interactive so it still works in pipes.
+# bat was installed and never wired up. --paging=never keeps `cat` non-interactive
+# so it still works in pipes and command substitution.
 alias cat='bat --paging=never'
+
+# sqlnico — local Azure SQL query tool (Python + React, https://localhost:4123)
+alias sqlnico='/Users/nicolas.alonso/code/projects/sqlnico/start.sh'
+alias sqlnico-dev='/Users/nicolas.alonso/code/projects/sqlnico/dev.sh'  # hot-reload UI dev
+
+alias dbeaver='/Users/nicolas.alonso/Applications/DBeaver.app/Contents/MacOS/dbeaver > /dev/null 2>&1 &'
 
 nvimf() {
   local file
@@ -91,13 +99,15 @@ export LS_COLORS="di=1;34:fi=0;37"
 
 # No DYLD_LIBRARY_PATH here on purpose. SIP strips it from every restricted
 # binary, so it vanishes through /bin/sh, /usr/bin/env, make and
-# subprocess(shell=True) -- it can never be relied on. If a tool needs it, scope
-# it to that project's .envrc, not to every shell.
+# subprocess(shell=True) -- it can never be relied on. It was presumably added
+# for unixODBC, which does not need it: pyodbc links libodbc.2.dylib by absolute
+# install name. If some tool ever does need it, scope it to that project's
+# .envrc, not to every shell.
 
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 # fd respects .gitignore and skips .git, so fzf stops walking .venv and
-# node_modules. Also what the `nvimf` function above picks up.
+# node_modules. Also what the `nvimf` function below picks up.
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --exclude .git'
@@ -117,6 +127,6 @@ command -v starship >/dev/null && eval "$(starship init zsh)"
 # -----------------------------
 # 9. ZSH PLUGINS (autosuggestions, then syntax-highlighting LAST)
 # -----------------------------
-source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source /Users/nicolas.alonso/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # zsh-syntax-highlighting MUST be the final sourced line — do not add anything below it.
-source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source /Users/nicolas.alonso/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

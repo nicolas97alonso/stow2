@@ -13,6 +13,21 @@ GNU stow packages. From `~/stow`, run `stow <pkg>` to symlink a package into pla
 cd ~/stow && stow ghostty nvim starship
 ```
 
+## Dependencies
+
+`Brewfile` tracks everything the configs actually need. On a new machine, or to
+find out what drifted on this one:
+
+```sh
+cd ~/stow
+brew bundle check --verbose   # what's missing
+brew bundle install           # install it
+```
+
+Worth running occasionally, not just on setup: a missing optional dependency of an
+nvim plugin is not an error anywhere. `ripgrep` went missing at some point and the
+only symptom was telescope's `<leader>fg` quietly doing nothing.
+
 ## zsh is per-machine
 
 `.zshrc` is **not** tracked (gitignored) — work and personal machines differ in

@@ -11,8 +11,10 @@ return {
       lsp = {
         progress = { enabled = false }, -- silence pyright/mason "analyzing…" spam
         override = {
+          -- Only convert_input_to_markdown_lines: on 0.12 nothing in the runtime
+          -- calls vim.lsp.util.stylize_markdown any more (it is itself deprecated
+          -- until 0.14), so overriding it was a no-op.
           ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-          ["vim.lsp.util.stylize_markdown"] = true,
         },
       },
       presets = {

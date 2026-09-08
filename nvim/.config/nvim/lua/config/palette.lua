@@ -2,9 +2,10 @@
 -- and noice so nothing hardcodes hex values.
 --
 -- "One Half Dark". The accents and greys are sonph/onehalf's
--- vim/colors/onehalfdark.vim `s:` variables verbatim. The background is
--- upstream's #282c34 -- the navy cast is produced by Ghostty's
--- background-opacity + blur over a blue-toned wallpaper, not by a navy hex here.
+-- vim/colors/onehalfdark.vim `s:` variables verbatim. The background was
+-- upstream's #282c34, darkened to #1a1c22 by request -- the navy cast is
+-- produced by Ghostty's background-opacity + blur over a blue-toned wallpaper,
+-- not by a navy hex here.
 -- Mirrors ghostty/.config/ghostty/config; change both together.
 --
 -- The colorscheme plugin is navarasu/onedark.nvim, style `dark`, which is Atom
@@ -14,7 +15,7 @@
 -- Three values have no OneHalfDark equivalent and come from onedark's own
 -- `dark` palette instead: bg_dark, grey_dim and orange. Marked below.
 return {
-  bg = "#282c34", -- upstream bg/black; also the terminal background
+  bg = "#1a1c22", -- darkened from upstream #282c34; also the terminal background
   bg_dark = "#21252b", -- onedark's bg_d; OneHalfDark defines nothing darker
   surface = "#313640", -- upstream cursor_line / color_col (lualine section b)
   surface_hi = "#373c45", -- upstream non_text; one step up from surface
