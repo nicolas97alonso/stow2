@@ -212,7 +212,7 @@ lightness as the One Half Dark base that preceded all this, and it lifts
 foreground contrast from 11.26:1 to 11.74:1. Keep `background`, `cursor-text` and
 `palette = 0` equal to each other and to `bg` in `palette.lua`.
 
-`bright-black` `#54546d` is the worst pairing against this base at 2.46:1 — it is
+`bright-black` `#54546d` is the worst pairing against this base at 2.33:1 — it is
 `grey_dim`, i.e. line numbers, and that is intentional. Anything below ~2:1 there
 would make the gutter vanish.
 
@@ -248,10 +248,15 @@ misleading pair to avoid matching against.
 
 Font is `JetBrainsMono Nerd Font Mono` (cask `font-jetbrains-mono-nerd-font`) —
 the **`Mono`** variant specifically, as the plain and `Propo` builds don't force
-icons to single cell width and make lualine/incline misalign. Only the `Mono`
-builds are installed anyway; `ghostty +list-fonts` shows just
-`JetBrainsMono Nerd Font Mono` and `JetBrainsMonoNL Nerd Font Mono` (NL = no
-ligatures). It exposes a `zero` GSUB feature substituting `zero` → `zero.zero`
+icons to single cell width and make lualine/incline misalign. The name matters:
+all six families the cask installs are present on this machine —
+`JetBrainsMono Nerd Font`, `… Nerd Font Mono`, `… Nerd Font Propo` and the three
+`JetBrainsMonoNL` equivalents (NL = no ligatures), per
+`system_profiler SPFontsDataType`. **Do not use `ghostty +list-fonts` to conclude
+otherwise**: it filters to monospace-flagged faces, so it lists only the two
+`Mono` ones, which previously read here as "only the `Mono` builds are installed"
+— false, and it would have silently allowed a mis-set `font-family` to resolve to
+the proportional build. It exposes a `zero` GSUB feature substituting `zero` → `zero.zero`
 (dumped from the GSUB table — its default zero is unslashed and the feature is
 what slashes it), so `font-feature = zero` applies.
 
@@ -299,8 +304,12 @@ reports "not a symlink" even though it is correctly stowed. Verify with
 ### Prompt
 
 - `starship/.config/starship.toml` — Omarchy's official `config/starship.toml`
-  with **three deviations**: a two-line prompt, a right-aligned clock, and a
-  non-cyan git branch. Everything else is Omarchy's.
+  with **four deviations**: a two-line prompt, a right-aligned clock (`[fill]` +
+  `[time]`), a non-cyan git branch, and `git_branch` truncation. Plus a `$schema`
+  line, which is editor tooling, not config. Everything else is Omarchy's, and
+  that is verifiable rather than asserted — diff against
+  `https://raw.githubusercontent.com/basecamp/omarchy/master/config/starship.toml`
+  produces exactly those hunks and nothing else (checked 2026-09-28).
 
   Unlike nvim/Ghostty, Omarchy ships exactly one Starship config for every theme,
   because every style is a **named ANSI color** (`cyan`, `italic yellow`, ...),
@@ -330,14 +339,20 @@ reports "not a symlink" even though it is correctly stowed. Verify with
   onto the `❯` line. 32 keeps the whole line under ~58 columns and preserves the
   IPMS ticket id, which is the part worth reading.
 
-  Colors, with contrast measured against the `#1f1f28` background: `directory`
-  and `character` stay `bold cyan`; `git_branch` is `italic yellow` (#c0a36e,
-  6.8:1, ~124° of hue off cyan so the two are distinct at a glance, with italic
-  as a second non-color differentiator); `time` is `purple` (#957fb8, 4.7:1 —
-  readable but low-saturation, so it reads as a quiet lavender rather than a
-  third competing accent; `bright-black` #54546d at 2.2:1 is the swap if it still
-  pulls focus). Note `black`/`bright-black` at 1.0:1/2.2:1 and the identical
-  `white`/`bright-white` are effectively unusable for distinguishing roles.
+  Colors, with contrast measured against the **current** `#1D1C19` background:
+  `directory` and `character` stay `bold cyan`; `git_branch` is `italic yellow`
+  (#c0a36e, 7.06:1, ~124° of hue off cyan so the two are distinct at a glance,
+  with italic as a second non-color differentiator); `time` is `purple` (#957fb8,
+  4.87:1 — readable but low-saturation, so it reads as a quiet lavender rather
+  than a third competing accent; `bright-black` #54546d at 2.33:1 is the swap if
+  it still pulls focus). Note `black`/`bright-black` at 1.0:1/2.33:1 and the
+  identical `white`/`bright-white` are effectively unusable for distinguishing
+  roles.
+
+  These numbers were stale until 2026-09-28: they were computed against the old
+  `#1f1f28` Wave background (yellow 6.78:1, purple 4.67:1, `bright-black` 2.23:1)
+  and not recomputed when the base moved to `#1D1C19`. **Recompute this paragraph
+  whenever `background` changes** — every ratio here depends on it.
 
   Transient prompt is **not available** — `starship init zsh` in 1.26 ships no
   transience code at all (it's PowerShell/Cmd/Fish/Bash only; zsh support is
