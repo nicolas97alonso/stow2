@@ -1,105 +1,102 @@
 return {
-  "navarasu/onedark.nvim",
-  version = false,
+  "rebelot/kanagawa.nvim",
   priority = 1000,
   config = function()
     local c = require("config.palette")
 
-    require("onedark").setup({
-      -- `dark` is the style whose bg0 is #282c34, i.e. One Half Dark's own
-      -- background. The other styles (darker/cool/deep/warm) shift it.
-      style = "dark",
-      -- Only sets Normal, Terminal, EndOfBuffer, Folded, FoldColumn, SignColumn
-      -- and WinBar to none -- see the `highlights` table below for the popup,
-      -- float, tabline and statusline groups it leaves opaque.
+    require("kanagawa").setup({
+      -- Wave, not Dragon/Lotus: it is the variant palette.lua is copied from.
+      -- Changing this shifts every accent out from under palette.lua, which the
+      -- statusline, incline and blink all read. Matches Omarchy's own
+      -- neovim.lua, which just installs stock kanagawa.nvim with no on_colors
+      -- equivalent -- Omarchy does not try to recolor the plugin to match its
+      -- terminal colors.toml, and neither does this.
+      theme = "wave",
+      background = { dark = "wave", light = "wave" },
       transparent = true,
-      term_colors = true,
-      ending_tildes = false,
-      -- Comments italic, nothing else, matching the reference.
-      code_style = {
-        comments = "italic",
-        keywords = "none",
-        functions = "none",
-        strings = "none",
-        variables = "none",
-      },
-      -- Virtual text keeps a background by default, which reads as an opaque
-      -- block against the blurred terminal.
-      diagnostics = {
-        darker = true,
-        undercurl = true,
-        background = false,
-      },
-      -- Pull onedark onto palette.lua's values so the plugin and the statusline
-      -- can't drift apart. onedark ships Atom One Dark; these overrides are what
-      -- make it One *Half* Dark. The accents are near-identical between the two,
-      -- so in practice only fg, red and the greys actually move.
-      colors = {
-        bg0 = c.bg,
-        bg1 = c.surface,
-        bg2 = c.surface_hi,
-        bg3 = c.selection, -- drives Visual and WinSeparator
-        bg_d = c.bg_dark,
-        fg = c.fg, -- #dcdfe4; onedark ships Atom One Dark's dimmer #abb2bf
-        red = c.red, -- onedark's #e86671 is oranger than OneHalfDark's
-        orange = c.orange,
-        yellow = c.yellow,
-        green = c.green,
-        cyan = c.aqua,
-        blue = c.blue,
-        purple = c.violet,
-        grey = c.grey,
-        light_grey = c.grey_light,
-      },
-      -- Note this table's merge semantics are the opposite of the plugin's
-      -- internal ones: user highlights leave *unspecified* attributes alone
-      -- (see replace_color in onedark/highlights.lua), so `bg = "NONE"` has to
-      -- be stated explicitly to get transparency -- omitting bg preserves it.
-      highlights = {
-        -- onedark puts LineNr at the comment grey and CursorLineNr at plain fg.
-        LineNr = { fg = c.grey_dim },
-        CursorLineNr = { fg = c.orange, fmt = "bold" },
-        -- Popup menu and floats: `transparent` does not reach these, they stay
-        -- on bg1. blink.cmp's BlinkCmpMenu / Label / LabelDetail /
-        -- LabelDescription / Kind / ScrollBarGutter default-link here, so these
-        -- keep the completion menu transparent without restating it in
-        -- blink.lua. PmenuSel is left at onedark's bg_blue; blink overrides its
-        -- own selection to violet.
-        Pmenu = { fg = c.fg, bg = "NONE" },
-        PmenuExtra = { fg = c.grey, bg = "NONE" },
-        PmenuKind = { fg = c.violet, bg = "NONE" },
-        PmenuSbar = { bg = "NONE" },
-        NormalFloat = { fg = c.fg, bg = "NONE" },
-        FloatBorder = { fg = c.grey_dim, bg = "NONE" },
-        -- Concealed text (markdown, json) otherwise carries a bg1 block.
-        Conceal = { fg = c.grey, bg = "NONE" },
-        -- lualine draws the statusline, but the bare groups still show in
-        -- windows it does not cover.
-        StatusLine = { bg = "NONE" },
-        StatusLineNC = { bg = "NONE" },
-        -- Tabline: mini.tabline is not enabled, so these are the groups that
-        -- actually render on :tabnew. onedark's TabLineSel is an inverted white
-        -- block (fg = bg0, bg = fg).
-        TabLine = { fg = c.grey, bg = "NONE" },
-        TabLineFill = { fg = c.grey, bg = "NONE" },
-        TabLineSel = { fg = c.fg, bg = c.selection, fmt = "bold" },
-        -- Cmdline (noice): no onedark integration. Green border to match the
-        -- statusline.
-        NoiceCmdlinePopup = { bg = "NONE" },
-        NoiceCmdlinePopupBorder = { fg = c.green, bg = "NONE" },
-        NoiceCmdlineIcon = { fg = c.green, bg = "NONE" },
-        NoiceCmdline = { fg = c.fg, bg = "NONE" },
-        -- Incline's floating filename label. Set here, not through incline's
-        -- own highlight.groups: incline deep-merges user values onto its
-        -- `{ group = "NormalFloat", default = true }` default and renders the
-        -- result as a legacy `:highlight` command, which silently left
-        -- InclineNormalNC with an opaque background. Its defaults are
-        -- `highlight default link`, so they yield to these.
-        InclineNormal = { fg = c.fg, bg = "NONE" },
-        InclineNormalNC = { fg = c.grey, bg = "NONE" },
-      },
+      terminalColors = true,
+      -- Matching the previous colorscheme: comments italic, nothing else.
+      -- kanagawa's own defaults italicize keywords and bold statements too.
+      commentStyle = { italic = true },
+      keywordStyle = {},
+      statementStyle = {},
+      functionStyle = {},
+      typeStyle = {},
+      -- No per-key overrides in `colors`: palette.lua is a verbatim copy of
+      -- kanagawa's own Wave palette, so there is nothing to pull the plugin
+      -- onto -- they are already the same values and cannot drift.
+      --
+      -- Unlike tokyonight, kanagawa's `transparent` option reaches only
+      -- `Normal` (verified against lua/kanagawa/highlights/editor.lua: it is
+      -- the single `config.transparent` check in the whole highlight set).
+      -- There is no `styles.floats/sidebars` equivalent either, so every other
+      -- surface below is cleared by hand. `NormalNC` needs nothing: it default
+      -- links to `Normal` (dimInactive is false), so it inherits the
+      -- transparency for free.
+      --
+      -- overrides() is a shallow `vim.tbl_extend("force", ...)` per group, not
+      -- a full replace like tokyonight's on_highlights -- omitting `bg` here
+      -- would leave the plugin's own opaque value in place, so every group
+      -- that needs to see through to the terminal states `bg = "NONE"`
+      -- explicitly.
+      ---@param colors { theme: table, palette: table } kanagawa's resolved colors
+      overrides = function(colors)
+        local theme = colors.theme
+        return {
+          LineNr = { fg = c.grey_dim, bg = "NONE" },
+          CursorLineNr = { fg = c.orange, bg = "NONE", bold = true },
+          SignColumn = { fg = theme.ui.special, bg = "NONE" },
+          FoldColumn = { fg = theme.ui.nontext, bg = "NONE" },
+          Folded = { fg = c.grey, bg = "NONE" },
+
+          -- Popup menu. blink.cmp's BlinkCmpMenu/Doc/SignatureHelp link to
+          -- Pmenu/NormalFloat/FloatBorder by default (kanagawa.nvim's own
+          -- plugins.lua), so styling those once here keeps the completion menu
+          -- transparent without restating it in blink.lua. PmenuSel/PmenuKindSel
+          -- are left at kanagawa's own value, same as before: blink overrides
+          -- its own selection to violet.
+          NormalFloat = { fg = c.fg, bg = "NONE" },
+          FloatBorder = { fg = c.grey_dim, bg = "NONE" },
+          FloatTitle = { fg = theme.ui.special, bg = "NONE", bold = true },
+          FloatFooter = { fg = theme.ui.nontext, bg = "NONE" },
+          Pmenu = { fg = c.fg, bg = "NONE" },
+          PmenuKind = { fg = c.violet, bg = "NONE" },
+          PmenuExtra = { fg = c.grey, bg = "NONE" },
+          PmenuSbar = { bg = "NONE" },
+
+          -- Telescope's own default `TelescopeBorder` links to `Normal`, but
+          -- kanagawa.nvim's plugins.lua overrides it with a real bg -- the one
+          -- surface tokyonight didn't have an equivalent for.
+          TelescopeBorder = { fg = c.grey_dim, bg = "NONE" },
+
+          -- lualine draws the statusline, but the bare groups still show in
+          -- windows it does not cover.
+          StatusLine = { bg = "NONE" },
+          StatusLineNC = { bg = "NONE" },
+
+          -- Tabline: mini.tabline is not enabled, so these are the groups that
+          -- actually render on :tabnew.
+          TabLine = { fg = c.grey, bg = "NONE" },
+          TabLineFill = { fg = c.grey, bg = "NONE" },
+          TabLineSel = { fg = c.fg, bg = c.selection, bold = true },
+
+          -- Cmdline (noice). Green border to match the statusline.
+          NoiceCmdlinePopup = { bg = "NONE" },
+          NoiceCmdlinePopupBorder = { fg = c.green, bg = "NONE" },
+          NoiceCmdlineIcon = { fg = c.green, bg = "NONE" },
+          NoiceCmdline = { fg = c.fg, bg = "NONE" },
+
+          -- Incline's floating filename label. Set here, not through incline's
+          -- own highlight.groups: incline deep-merges user values onto its
+          -- `{ group = "NormalFloat", default = true }` default and renders the
+          -- result as a legacy `:highlight` command, which silently left
+          -- InclineNormalNC with an opaque background.
+          InclineNormal = { fg = c.fg, bg = "NONE" },
+          InclineNormalNC = { fg = c.grey, bg = "NONE" },
+        }
+      end,
     })
 
-    require("onedark").load()
+    vim.cmd.colorscheme("kanagawa")
   end,
 }

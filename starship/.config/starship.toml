@@ -1,81 +1,84 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Deliberately minimal: folder, git branch + dirty state, how long the last command
-# took, and a clock on the right. No emoji, no language/runtime version modules.
+# Based on Omarchy's official config/starship.toml, with three deviations:
+# a two-line prompt, a right-aligned clock, and a non-cyan git branch.
 #
-# The two accents are pinned hexes, taken from the reference prompt's omp.json:
-# lavender #AE8FE7 and grey #454758. #AE8FE7 is deliberately NOT in the
-# One Half Dark palette (its purple is #c678dd), so an ANSI name cannot produce
-# it. Consequence: these two no longer follow the terminal palette. The
-# remaining modules are still ANSI names and do.
+# Every style here is a **named ANSI color**, never a hex. Starship resolves
+# these against the terminal's live palette, so the prompt re-themes itself off
+# ghostty's `palette = 0..15` whenever the theme changes -- pinning hexes here
+# would mean hand-editing this file on every theme switch.
 #
-# #454758 measures 1.53:1 against the #282c34 background -- it was a powerline
-# segment *fill* in the reference, not text. #5c6370 (2.32:1) or bright-black
-# are the legible alternatives if the clock is too dim to read.
+# TRAP, measured: starship **silently ignores** color names it doesn't know --
+# no error, no warning, the text just renders unstyled. The magenta slot is
+# spelled `purple` (NOT `magenta`) and bright variants are hyphenated
+# (`bright-purple`, NOT `bright_purple`). Both wrong spellings emit zero escape
+# codes. Verify any color change with `starship explain`, which prints the
+# resolved codes -- `1;36` = bold cyan, `3;33` = italic yellow, `35` = purple.
+add_newline = true
+command_timeout = 200
 
-# Density: on a two-line prompt the blank line starship adds above it is wasted
-# vertical space.
-add_newline = false
+# Two lines: context on top, a bare prompt character below.
+#
+# `$fill` is what right-aligns the clock, and it has to be `$fill` rather than a
+# `right_format` entry. Starship's own docs are explicit that the right prompt
+# is "a single line following the input location" -- i.e. `right_format` in zsh
+# is RPROMPT and lands next to where you type, on line 2, not out at the right
+# of the context line. `fill` is the documented way to right-align something
+# *above* the input line. Don't "simplify" this into right_format.
+format = "$directory$git_branch$git_status$fill$time$line_break$character"
 
-# An explicit `format` suppresses every module not listed, including the ones
-# starship enables by default. $git_state and $jobs are listed for that reason
-# alone: without them REBASING/MERGING/CHERRY-PICKING and a backgrounded
-# `uv run ... &` are invisible. [jobs] needs no section of its own -- its default
-# symbol is U+2726 (a dingbat, not an emoji) and threshold is 1, so it only
-# renders when a job is actually backgrounded.
-format = """
-$directory\
-$git_branch\
-$git_state\
-$git_status\
-$cmd_duration\
-$jobs\
-$line_break\
-$status\
-$character"""
-
-right_format = "$time"
+[character]
+error_symbol = "[✗](bold cyan)"
+success_symbol = "[❯](bold cyan)"
 
 [directory]
-style = "bold #AE8FE7"
-truncation_length = 1
-truncate_to_repo = false
-truncation_symbol = ""
+truncation_length = 2
+truncation_symbol = "…/"
+repo_root_style = "bold cyan"
+repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 
 [git_branch]
-# Not the lavender: at 25 degrees of hue from it the branch was indistinguishable
-# from the directory. Cyan sits 74 degrees off the lavender and at least 90 off
-# the red status, yellow duration and green prompt char -- the widest separation
-# available in this palette. 5.91:1 on #282c34.
-style = "bold #56b6c2"
-
-[git_state]
-# One Half Dark's purple, which no other module here uses -- so the state can't
-# be confused with the cyan branch, the red status or the yellow duration. The
-# default `bold yellow` would collide with cmd_duration.
-# The format itself is left at the default:
-# '\([$state( $progress_current/$progress_total)]($style)\) '
-style = "bold #c678dd"
+format = "[$branch]($style) "
+# Yellow (#c0a36e, 7.1:1 on the #1D1C19 background), not the cyan everything
+# else uses: ~124 deg of hue separation from `directory`, so the two read as
+# distinct at a glance. Italic is kept as a second, non-color differentiator.
+style = "italic yellow"
+# Load-bearing for the clock, not cosmetic. `fill` clamps to a 2-space minimum
+# and starship never reflows on overflow, so with a full-length branch name --
+# feature/IPMS-6912_fix_high_vulnerabilities_dbt_runtime_api is 58 chars -- the
+# line ran to ~83 columns and the terminal soft-wrapped the clock down onto the
+# `❯` line. Truncating here keeps the whole context line under ~58 columns.
+# 32 is chosen to preserve the IPMS ticket id, which is the part worth reading.
+truncation_length = 32
+truncation_symbol = "…"
 
 [git_status]
-style = "bold red"
+format     = '[$all_status]($style)'
+style      = "cyan"
+ahead      = "⇡${count} "
+diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
+behind     = "⇣${count} "
+conflicted = " "
+up_to_date = " "
+untracked  = "? "
+modified   = " "
+stashed    = ""
+staged     = ""
+renamed    = ""
+deleted    = ""
 
-[cmd_duration]
-min_time = 1000
-style = "bold yellow"
+# A literal space, overriding the default `.` -- the padding has to be
+# invisible. `style` is left alone because a space renders nothing regardless.
+[fill]
+symbol = " "
 
-[status]
-# Off by default, and its default symbols are emoji (❌ 🔍 🧱 ⚡), so the format
-# is overridden to drop $symbol and print the bare exit code.
-# This only adds the number. It is not a fix for silent failures: [character]'s
-# error_symbol is already `[❯](bold red)`, so a non-zero exit is visible without
-# this module.
-disabled = false
-format = "[$status]($style) "
-style = "bold red"
-
+# Disabled by default, hence the explicit false. Default time_format is %T
+# (with seconds); %R is bare HH:MM.
 [time]
 disabled = false
 format = "[$time]($style)"
-time_format = "%H:%M"
-style = "#454758"
+time_format = "%R"
+# Purple #957fb8 at 4.9:1 -- readable but low-saturation, so it reads as a quiet
+# lavender rather than a third competing accent. `bright-black` (#54546d, 2.2:1)
+# is the swap if this still pulls too much focus.
+style = "purple"

@@ -1,60 +1,107 @@
 # Ghostty is the only terminal config in this repo. Kept intentionally explicit
-# rather than using a bundled `theme =`, because of the two deviations below.
+# rather than using a bundled `theme = ...`, so the terminal palette can be
+# generated the same way Omarchy's own theme engine does it.
 
-# 1. "One Half Dark" palette (sonph/onehalf)
-# Accents are upstream verbatim. The background was upstream's #282c34, darkened
-# to #1a1c22 by request -- the navy cast comes from background-opacity + blur
-# over a blue-toned wallpaper, NOT from a navy hex baked in here. Mirrored in
-# nvim's lua/config/palette.lua; change both together.
-background = 1a1c22
-foreground = dcdfe4
+# 1. Kanagawa (Omarchy's official "kanagawa" theme)
+# The 15 accent colors are Omarchy's own themes/kanagawa/colors.toml, run through
+# its default/themed/ghostty.conf.tpl mapping, verbatim. Mirrors nvim's
+# lua/config/palette.lua (which is kanagawa.nvim's own Wave palette instead --
+# Omarchy's neovim.lua just installs stock kanagawa.nvim, so editor and terminal
+# accents are expected to diverge slightly; see the comments there).
+#
+# ONE deliberate deviation: the neutral base is Kanagawa **Dragon**'s grey ladder
+# instead of Wave's purple-tinted sumiInk ladder, because a dark grey base was
+# wanted. These are still official Kanagawa values (kanagawa.nvim's colors.lua
+# `dragonBlack*`), not invented ones, so the base and the accents still come from
+# the same designer's palette:
+#   background / cursor-text / palette 0  sumiInk3 #1f1f28 -> dragonBlack2 #1D1C19
+#   selection-background                  sumiInk5 #363646 -> dragonBlack5 #393836
+# dragonBlack2 was picked over Dragon's own bg (dragonBlack3 #181616) because
+# #181616 reads as near-black (L* 7.5) rather than grey. #1D1C19 is L* 10.3 --
+# the same lightness as the old One Half Dark base this replaced -- and it raises
+# foreground contrast from 11.26:1 to 11.74:1, which also helps the text read
+# less thin. Keep `background`, `cursor-text` and `palette = 0` equal to each
+# other, and equal to `bg` in nvim's palette.lua.
+background = 1D1C19
+foreground = dcd7ba
 
-cursor-color = dcdfe4
-cursor-text = 282c34
+cursor-color = dcd7ba
+cursor-text = 1D1C19
 
-# Upstream's terminal ports have no usable selection color (the kitty port ships
-# #FFFACD), so this is the `selection` value from its vim colorscheme instead.
-selection-background = 474e5d
-selection-foreground = dcdfe4
+selection-background = 393836
+selection-foreground = dcd7ba
 
-# Deviation 1: upstream sets black AND brightBlack to #282c34, i.e. both equal
-# the background, which makes anything printed in ANSI black or bright-black
-# invisible. 0 is lifted to onehalf's own non_text; 8 to the value its kitty
-# port uses. Everything else is upstream.
-palette = 0=#373c45
-palette = 1=#e06c75
-palette = 2=#98c379
-palette = 3=#e5c07b
-palette = 4=#61afef
-palette = 5=#c678dd
-palette = 6=#56b6c2
-palette = 7=#dcdfe4
-# Deviation 2: upstream deliberately makes 9-15 identical to 1-7. Kept as
-# upstream despite btop/htop leaning on brights being distinguishable -- the
-# flat look is part of the theme's identity.
-palette = 8=#5d677a
-palette = 9=#e06c75
-palette = 10=#98c379
-palette = 11=#e5c07b
-palette = 12=#61afef
-palette = 13=#c678dd
-palette = 14=#56b6c2
-palette = 15=#dcdfe4
+palette = 0=#1D1C19
+palette = 1=#c34043
+palette = 2=#76946a
+palette = 3=#c0a36e
+palette = 4=#7e9cd8
+palette = 5=#957fb8
+palette = 6=#6a9589
+palette = 7=#dcd7ba
+palette = 8=#54546d
+palette = 9=#e82424
+palette = 10=#98bb6c
+palette = 11=#e6c384
+palette = 12=#7fb4ca
+palette = 13=#938aa9
+palette = 14=#7aa89f
+palette = 15=#dcd7ba
 
 # 2. Font
-# The Nerd Font patched build rather than plain JetBrains Mono: lualine's
-# powerline separators, mini.icons and blink's kind icons need the glyphs.
-# Ghostty matches on family name, and draws powerline/box-drawing from internal
-# sprites, so no Symbols Nerd Font fallback is needed.
+# The `Mono` variant specifically: its icon glyphs are forced to single cell
+# width, which the plain and `Propo` Nerd Font builds do not do -- those make
+# lualine and incline misalign. Only the `Mono` builds are installed anyway
+# (`ghostty +list-fonts` lists JetBrainsMono Nerd Font Mono and
+# JetBrainsMonoNL Nerd Font Mono -- NL = no ligatures -- and nothing else).
+# Verified present in this face rather than assumed, by dumping its cmap:
+# U+E62B and U+F031B (the devicon/material ranges mini.icons and blink draw
+# from), plus U+25CF (incline's modified marker), U+EA87 and U+F00D.
+# Powerline U+E0B0-B3 comes from Ghostty's internal sprites either way, so
+# lualine's separators do not depend on the font at all.
+# One codepoint is genuinely absent and it is fine: U+2726 (was starship's jobs
+# symbol -- the current starship config has no jobs module, and the Menlo
+# fallback below covers it regardless).
+# The U+1FB00 legacy-computing block is NOT a font concern: Ghostty draws it from
+# internal sprites too, so it renders whatever face is set. Do not re-add the old
+# claim that it is missing here -- see smear-cursor.lua.
 font-family = JetBrainsMono Nerd Font Mono
 font-family = Menlo
 font-size = 13
-# The installed JetBrainsMono Nerd Font Mono face exposes a `zero` GSUB feature.
-# Slashed zero disambiguates 0 from O in hashes, run IDs and cluster names.
+
+# Weight. JetBrains Mono Regular is NOT the thin one -- measured stem width of
+# 'H' sampled above the crossbar, in 1/1000 em, so comparable across faces:
+#   JetBrains Regular 90   Medium 99   SemiBold 108   Bold 125
+#   IBM Plex  Regular 84   Text   97
+# i.e. JetBrains Regular is already 7% heavier than IBM Plex Regular. The text
+# read thin for a *contrast* reason, not a stroke reason: Kanagawa's warm beige
+# fg on the old Wave background was 11.26:1 where the previous theme was 12.75:1.
+# The grey base in section 1 recovers part of that; these two knobs do the rest.
+#
+# Medium (500) is a real drawn face, not synthesized, so it stays crisp -- unlike
+# leaning on font-synthetic-style. Bold stays default (Bold, 125) so bold text is
+# still clearly distinct from the 99 of Medium.
+font-style = Medium
+font-style-italic = Medium Italic
+# macOS-only stem darkening, layered on top of the heavier face. This is the dial
+# to back off first if the result looks too heavy or slightly blurred: either set
+# font-thicken = false, or keep it and lower font-thicken-strength (0-255, default
+# 255 -- and note 0 means "lightest thickening", not "none").
+font-thicken = true
+# This face exposes a `zero` GSUB feature that substitutes zero -> zero.zero
+# (confirmed by dumping its GSUB table, not assumed -- JetBrains Mono's default
+# zero is unslashed and the feature is what slashes it). Slashed zero
+# disambiguates 0 from O in hashes, run IDs and cluster names.
 font-feature = zero
 
-# No adjust-cell-height: JetBrains Mono's natural 1.3200em line box is used
-# as-is, matching upstream's config, which sets no adjustment either.
+# No adjust-cell-height: the face's natural line box is used as-is.
+# Do NOT re-add the old "IBM Plex is wider than JetBrains Mono, so bump the size
+# down" note that used to live here -- it was wrong. Both faces have an
+# identical 600/1000 em advance (measured from hmtx/head), so 13pt gives a
+# 7.80pt cell either way and the column count does not change between them.
+# What does differ: JetBrains Mono has the larger x-height (0.550 em vs 0.516),
+# so it reads slightly bigger at the same nominal size, and a marginally taller
+# line box (1.32 em vs 1.30).
 # Note the block cursor does NOT scale with this (see adjust-cursor-height).
 
 # If text shows dark fringing against the transparent background,
@@ -62,14 +109,19 @@ font-feature = zero
 # weight-neutral, not a "lighter text" setting.
 
 # 3. Transparency + blur
-# This is what produces the "navy translucent" look: the wallpaper showing
-# through a #282c34 background. A blue/teal wallpaper is part of the aesthetic
-# -- on a neutral or warm wallpaper the theme just reads as flat grey.
+# This is what produces the translucent look: the wallpaper showing through the
+# #1D1C19 background above. That background is a near-neutral warm grey (chroma
+# 4/255), so it tints whatever is behind it rather than imposing a hue -- on a
+# busy wallpaper the blur below is what keeps text legible, not the opacity.
+# Ghostty has no gradient background option (the only related knobs are
+# background-image and its -opacity/-position/-fit/-repeat); a gradient would
+# mean generating a PNG for background-image, which is opaque and would defeat
+# the blur below. Flat + blur was chosen over that.
 # Changing background-opacity on macOS needs a full quit to take effect, and
 # it is disabled in native fullscreen.
-background-opacity = 0.95
+background-opacity = 0.85
 # Ghostty's unit is an intensity (0-255), not a pixel radius.
-background-blur = 20
+background-blur = 30
 
 # 4. Native tabs in the titlebar, window buttons hidden.
 # Chosen over a fully hidden titlebar (`macos-titlebar-style = hidden`), which
