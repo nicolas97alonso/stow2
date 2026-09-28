@@ -1,0 +1,63 @@
+# Template. Copy to zsh/.zshenv and edit for this machine (see README).
+#
+# Runs for EVERY zsh — including non-interactive (`zsh -c`), git hooks, `make
+# SHELL=zsh`, `ssh host cmd` and editor/agent tasks. That is the whole point of
+# this file. Anything exported only from .zshrc is invisible outside an interactive
+# shell, which is a silent failure: on this machine that meant
+#
+#   env -i /bin/zsh -c 'echo $PATH'   ->  /bin:/usr/bin:/usr/ucb:/usr/local/bin
+#
+# so hooks and subprocesses ran with no brew, no CA bundle and no libodbc, and
+# `import pyodbc` failed only outside the terminal. Measured 2026-09-28.
+#
+# Keep this file to env vars only — no aliases, no functions, no prompt, nothing
+# that writes to stdout. It runs for scripts too, and output here breaks scp/rsync.
+
+: ${HOMEBREW_PREFIX:=$HOME/homebrew}
+
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
+# -----------------------------
+# PATH
+# -----------------------------
+# .zshrc deliberately repeats these two lines. Not redundant: macOS's /etc/zprofile
+# runs path_helper for *login* shells, which reorders whatever this file set and
+# pushes the system dirs back to the front — measured here, it demoted
+# ~/.local/bin from position 2 to position 13, behind /usr/bin. Ghostty starts login
+# shells, so .zshrc is what restores the intended precedence interactively, and this
+# file is what gives non-interactive shells a PATH at all. typeset -U dedups.
+export PATH="$HOMEBREW_PREFIX/bin:$HOME/.local/bin:$PATH"
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+typeset -U path PATH   # dedup PATH
+
+# Install Homebrew casks (GUI apps) to ~/Applications — needed on a machine with no
+# sudo, where brew can't write the default /Applications. Drop it if you have sudo.
+export HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications"
+
+# -----------------------------
+# Work-machine only — delete both blocks on a personal machine
+# -----------------------------
+# Node's bundle is missing the legacy GlobalSign Root CA needed for npmjs.org and
+# the corporate roots needed for internal hosts and for pi's OAuth refresh
+# (platform.claude.com). One persistent bundle, not a throwaway per-command pem.
+# Has to be here rather than .zshrc: npm and pi are routinely started by things that
+# are not an interactive shell, and those hit UNABLE_TO_GET_ISSUER_CERT_LOCALLY.
+# Regeneration snippet lives in ~/.claude/CLAUDE.md.
+export NODE_EXTRA_CA_CERTS="$HOME/.local/share/certs/allianz-ca-bundle.pem"
+
+# pyodbc links libodbc.2.dylib by a hardcoded absolute path under /opt/homebrew,
+# which does not exist on a non-default-prefix install. Without this, every
+# dbt/pyodbc command fails with
+# "Library not loaded: /opt/homebrew/opt/unixodbc/lib/libodbc.2.dylib".
+#
+# FALLBACK rather than DYLD_LIBRARY_PATH deliberately: the fallback list is only
+# consulted *after* a dylib misses its own install path, so it cannot shadow a
+# correctly linked library the way DYLD_LIBRARY_PATH does for every process.
+# The two trailing entries are dyld's own documented defaults (`man dyld`) — setting
+# this variable at all replaces that default list, so they are restored rather than
+# silently dropped.
+#
+# Note SIP strips both DYLD_* vars across an exec of a restricted binary such as
+# /bin/zsh, so this can never be inherited from a parent — it has to be assigned
+# inside zsh, which is what this file does.
+export DYLD_FALLBACK_LIBRARY_PATH="$HOMEBREW_PREFIX/lib:/usr/local/lib:/usr/lib"

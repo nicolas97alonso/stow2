@@ -3,6 +3,10 @@
 *.swo
 
 # zsh is per-machine (work vs personal: different homebrew prefix, username, aliases).
-# Tracked as zsh/.zshrc.example — copy + edit per machine. See README.
+# Tracked as zsh/.zshrc.example / zsh/.zshenv.example — copy + edit per machine.
+# .zshenv is per-machine for the same reason and then some: it carries the Allianz
+# CA bundle path and the unixODBC workaround, both of which are work-only.
+# See README.
 zsh/.zshrc
 zsh/.zshrc.bak.*
+zsh/.zshenv

@@ -10,7 +10,8 @@
 
 # Terminal + prompt + shell
 cask "ghostty"
-cask "font-jetbrains-mono-nerd-font" # font-family in ghostty/config; Nerd Font glyphs for lualine/mini.icons/blink
+cask "font-jetbrains-mono-nerd-font" # font-family in ghostty/config; Nerd Font glyphs for lualine/mini.icons/blink/incline
+cask "font-hack-nerd-font"           # the only installed face serving U+21E1/21D5/21E3, starship's git_status ahead/diverged/behind arrows
 brew "starship"                      # reads starship/.config/starship.toml
 brew "zsh-autosuggestions"           # sourced by .zshrc section 9
 brew "zsh-syntax-highlighting"       # sourced by .zshrc section 9, must be last
@@ -26,7 +27,8 @@ brew "ripgrep" # telescope live_grep (<leader>fg) is dead without it
 brew "fd"      # telescope find_files and FZF_DEFAULT_COMMAND; falls back to `find` otherwise
 
 # Shell tooling referenced by .zshrc
-brew "fzf"   # section 7 + the nvimf function
+brew "fzf"    # section 7 + the nvimf function
 brew "zoxide" # section 7
+brew "direnv" # section 7 hooks it; the `command -v` guard means a missing direnv silently no-ops
 brew "bat"   # `cat` alias and MANPAGER
 brew "eza"   # ls/ll/la/lt aliases

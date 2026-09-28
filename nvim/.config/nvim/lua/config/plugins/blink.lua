@@ -2,12 +2,17 @@
 -- Replaces nvim-cmp + cmp-nvim-lsp + cmp-buffer + cmp-path + cmp_luasnip
 -- + LuaSnip + lspkind: fuzzy matching, snippets and kind icons are built in.
 -- Note on laziness: this is a dependency of nvim-lspconfig (it supplies
--- get_lsp_capabilities()), so it actually loads on BufReadPre, not on
--- InsertEnter. Kept declared as a dependency rather than eager here; there is no
--- `event` because it would be a lie.
+-- get_lsp_capabilities()), so it loads on BufReadPre, not on InsertEnter. There is
+-- no `event` because it would be a lie.
+-- `lazy = true` is load-bearing, not redundant: lazy.nvim only infers laziness from
+-- `_.dep`, `event`, `keys`, `ft` or `cmd`, and `_.dep` is false for a *root* spec.
+-- Being listed under nvim-lspconfig's `dependencies` does not make this top-level
+-- spec lazy, so without it the plugin was eager (verified: `lazy=false loaded=true`
+-- while nvim-lspconfig was still unloaded) and the comment above was wrong.
 return {
   "saghen/blink.cmp",
   version = "1.*",
+  lazy = true,
   dependencies = { "rafamadriz/friendly-snippets" },
   opts = {
     keymap = {

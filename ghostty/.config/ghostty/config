@@ -176,8 +176,16 @@ resize-overlay = never
 # so binding them here would silently shadow tab switching. ctrl+brackets are
 # unbound in the defaults, and the tab binds (ctrl+tab / ctrl+shift+tab,
 # super+shift+brackets, super+1..9) all stay live.
-keybind = super+ctrl+[=goto_window:previous
-keybind = super+ctrl+]=goto_window:next
+#
+# `bracket_left`/`bracket_right`, NOT literal `[`/`]`: a single-codepoint trigger
+# is matched against the *unmodified* codepoint of the key, which is layout
+# dependent. This machine is com.apple.keylayout.Spanish-ISO, where no key produces
+# a bare `[` or `]` (they need right-Option -- see the note in section 7), so the
+# literal form never matched and goto_window had no working bind at all from when
+# it was added until 2026-09-28. The W3C physical key names are layout independent.
+# Same distinction as `backquote` vs `grave` in section 11.
+keybind = super+ctrl+bracket_left=goto_window:previous
+keybind = super+ctrl+bracket_right=goto_window:next
 
 # 9. Don't prompt when closing
 confirm-close-surface = false

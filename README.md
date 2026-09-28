@@ -30,15 +30,24 @@ only symptom was telescope's `<leader>fg` quietly doing nothing.
 
 ## zsh is per-machine
 
-`.zshrc` is **not** tracked (gitignored) — work and personal machines differ in
-Homebrew prefix, username, and aliases. The repo ships `zsh/.zshrc.example` as a
-starting point.
+`.zshrc` and `.zshenv` are **not** tracked (gitignored) — work and personal machines
+differ in Homebrew prefix, username, and aliases, and `.zshenv` additionally carries
+the Allianz CA bundle path and a unixODBC workaround that are work-only. The repo
+ships `zsh/.zshrc.example` and `zsh/.zshenv.example` as starting points.
 
 ```sh
-cp ~/stow/zsh/.zshrc.example ~/stow/zsh/.zshrc
-# edit ~/stow/zsh/.zshrc for this machine, then:
+cp ~/stow/zsh/.zshrc.example  ~/stow/zsh/.zshrc
+cp ~/stow/zsh/.zshenv.example ~/stow/zsh/.zshenv
+# edit both for this machine, then:
 cd ~/stow && stow zsh
 ```
+
+**Both files are needed.** `.zshrc` is read only for *interactive* shells, so
+anything exported there alone is invisible to `zsh -c`, git hooks, `make SHELL=zsh`
+and editor/agent tasks — a silent failure mode (PATH, the CA bundle and libodbc were
+all missing outside the terminal until 2026-09-28). PATH is deliberately set in
+*both*: `.zshenv` so non-interactive shells have one at all, `.zshrc` because macOS's
+`/etc/zprofile` runs `path_helper` for login shells and reorders it.
 
 ### Lines every machine's `.zshrc` needs
 
