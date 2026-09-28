@@ -51,9 +51,14 @@ palette = 15=#dcd7ba
 # 2. Font
 # The `Mono` variant specifically: its icon glyphs are forced to single cell
 # width, which the plain and `Propo` Nerd Font builds do not do -- those make
-# lualine and incline misalign. Only the `Mono` builds are installed anyway
-# (`ghostty +list-fonts` lists JetBrainsMono Nerd Font Mono and
-# JetBrainsMonoNL Nerd Font Mono -- NL = no ligatures -- and nothing else).
+# lualine and incline misalign. So the exact family name below is load-bearing:
+# all six families the cask ships ARE installed here -- JetBrainsMono Nerd Font,
+# Nerd Font Mono, Nerd Font Propo, and the three JetBrainsMonoNL equivalents
+# (NL = no ligatures) -- measured with `system_profiler SPFontsDataType`.
+# Do NOT re-add the old claim that only the `Mono` builds are installed:
+# `ghostty +list-fonts` filters to monospace-flagged faces, which is the only
+# reason it lists just the two, and that reading would let a typo here resolve
+# to the proportional build silently.
 # Verified present in this face rather than assumed, by dumping its cmap:
 # U+E62B and U+F031B (the devicon/material ranges mini.icons and blink draw
 # from), plus U+25CF (incline's modified marker), U+EA87 and U+F00D.

@@ -78,7 +78,7 @@ symbol = " "
 disabled = false
 format = "[$time]($style)"
 time_format = "%R"
-# Purple #957fb8 at 4.9:1 -- readable but low-saturation, so it reads as a quiet
-# lavender rather than a third competing accent. `bright-black` (#54546d, 2.2:1)
+# Purple #957fb8 at 4.87:1 -- readable but low-saturation, so it reads as a quiet
+# lavender rather than a third competing accent. `bright-black` (#54546d, 2.33:1)
 # is the swap if this still pulls too much focus.
 style = "purple"
