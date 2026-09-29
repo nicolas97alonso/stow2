@@ -45,19 +45,37 @@ export HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications"
 # Regeneration snippet lives in ~/.claude/CLAUDE.md.
 export NODE_EXTRA_CA_CERTS="$HOME/.local/share/certs/allianz-ca-bundle.pem"
 
-# pyodbc links libodbc.2.dylib by a hardcoded absolute path under /opt/homebrew,
-# which does not exist on a non-default-prefix install. Without this, every
-# dbt/pyodbc command fails with
-# "Library not loaded: /opt/homebrew/opt/unixodbc/lib/libodbc.2.dylib".
+# SQL Server / ODBC. The whole ODBC stack hardcodes /opt/homebrew, so on any
+# non-default-prefix install there are TWO breakages needing TWO variables; neither
+# substitutes for the other:
 #
-# FALLBACK rather than DYLD_LIBRARY_PATH deliberately: the fallback list is only
-# consulted *after* a dylib misses its own install path, so it cannot shadow a
-# correctly linked library the way DYLD_LIBRARY_PATH does for every process.
-# The two trailing entries are dyld's own documented defaults (`man dyld`) — setting
-# this variable at all replaces that default list, so they are restored rather than
-# silently dropped.
+# 1. pyodbc's .so *links* libodbc.2.dylib by absolute install name, so without the
+#    FALLBACK line `import pyodbc` itself dies with
+#    "Library not loaded: /opt/homebrew/opt/unixodbc/lib/libodbc.2.dylib".
+# 2. libmsodbcsql.18.dylib *dlopens* OpenSSL by absolute path at connect time, trying
+#    only /opt/homebrew/opt/openssl/lib and /opt/local/lib (MacPorts). Fixing (1)
+#    alone just moves the failure one layer later, to "SSL Provider: [OpenSSL library
+#    could not be loaded...]" — which dbt reports as the much less helpful
+#    "08001 Client unable to establish connection".
+#
+# Why both, measured with DYLD_PRINT_LIBRARIES=1: FALLBACK is consulted only after a
+# dylib misses its own install path and only for a bare leaf name, so it fixes (1)
+# without being able to shadow a correctly linked library the way LIBRARY_PATH can —
+# but it cannot fix (2), because dyld never consults FALLBACK for a dlopen whose
+# argument contains a slash. LIBRARY_PATH *is* searched by leaf name even then, which
+# is the only hook into a hardcoded absolute path. The trailing two FALLBACK entries
+# are dyld's own documented defaults (`man dyld`); setting the variable at all
+# replaces that list, so they are restored rather than silently dropped.
+#
+# Point LIBRARY_PATH at the openssl keg, NOT at $HOMEBREW_PREFIX/lib: the wide dir
+# would shadow every brew library by leaf name, while the keg can only shadow
+# libssl{,.3}.dylib and libcrypto{,.3}.dylib. Pin the versioned name so a future
+# openssl@4 becoming the `openssl` alias cannot silently move it.
+#
+# The real fix is a /opt/homebrew/opt/{unixodbc,openssl} symlink, which needs sudo.
 #
 # Note SIP strips both DYLD_* vars across an exec of a restricted binary such as
-# /bin/zsh, so this can never be inherited from a parent — it has to be assigned
+# /bin/zsh, so neither can be inherited from a parent — they have to be assigned
 # inside zsh, which is what this file does.
 export DYLD_FALLBACK_LIBRARY_PATH="$HOMEBREW_PREFIX/lib:/usr/local/lib:/usr/lib"
+export DYLD_LIBRARY_PATH="$HOMEBREW_PREFIX/opt/openssl@3/lib"
