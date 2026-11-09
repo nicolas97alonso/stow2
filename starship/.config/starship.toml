@@ -41,9 +41,9 @@ repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($r
 
 [git_branch]
 format = "[$branch]($style) "
-# Yellow (#c0a36e, 7.1:1 on the #1D1C19 background), not the cyan everything
-# else uses: ~124 deg of hue separation from `directory`, so the two read as
-# distinct at a glance. Italic is kept as a second, non-color differentiator.
+# Yellow (#c7a15a, 7.0:1 on the #1D1C19 background), not the cyan everything
+# else uses: far enough off `directory` in hue that the two read as distinct at
+# a glance. Italic is kept as a second, non-color differentiator.
 style = "italic yellow"
 # Load-bearing for the clock, not cosmetic. `fill` clamps to a 2-space minimum
 # and starship never reflows on overflow, so with a full-length branch name --
@@ -57,7 +57,7 @@ truncation_symbol = "…"
 
 [git_status]
 format     = '[$all_status]($style)'
-# Blue (#7e9cd8, 6.2:1 on #1D1C19) -- was cyan, which is the same color as
+# Blue (#7c9cdb, 6.2:1 on #1D1C19) -- was cyan, which is the same color as
 # `directory`'s default style and made the up_to_date dot blend into the path.
 style      = "blue"
 ahead      = "⇡${count} "
@@ -83,7 +83,6 @@ symbol = " "
 disabled = false
 format = "[$time]($style)"
 time_format = "%R"
-# Purple #957fb8 at 4.87:1 -- readable but low-saturation, so it reads as a quiet
-# lavender rather than a third competing accent. `bright-black` (#54546d, 2.33:1)
-# is the swap if this still pulls too much focus.
+# Purple #a98fd2 at 6.1:1 (retuned; upstream #957fb8 was 4.87:1 and quieter).
+# `bright-black` (#54546d, 2.33:1) is the swap if this pulls too much focus.
 style = "purple"

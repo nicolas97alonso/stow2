@@ -1,11 +1,11 @@
 return {
   "echasnovski/mini.nvim", -- We use the main repo to ensure it downloads correctly
   version = false,
-  lazy = false, -- load early so mini.icons can mock devicons before lualine/neo-tree
+  lazy = false, -- load early so mini.icons can mock devicons before lualine/oil
   priority = 900, -- after the colorscheme (1000), before everything else
   config = function()
     -- 🎨 Colorful file/folder icons (replaces nvim-web-devicons everywhere).
-    -- Must mock BEFORE lualine/neo-tree require the real nvim-web-devicons.
+    -- Must mock BEFORE lualine/oil require the real nvim-web-devicons.
     require("mini.icons").setup({
       style = "glyph",
     })
@@ -43,7 +43,8 @@ return {
     -- Disable it on files where it looks ugly (help menus, plugin UIs)
     vim.api.nvim_create_autocmd("FileType", {
       group = vim.api.nvim_create_augroup("miniindentscope_disable", { clear = true }),
-      pattern = { "help", "lazy", "mason", "notify", "neo-tree", "TelescopePrompt", "noice" },
+      -- cmd/msg/pager/dialog are ui2's own buffers (`:help ui2`).
+      pattern = { "help", "lazy", "mason", "oil", "TelescopePrompt", "cmd", "msg", "pager", "dialog" },
       callback = function()
         vim.b.miniindentscope_disable = true
       end,

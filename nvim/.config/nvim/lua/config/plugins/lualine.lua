@@ -44,14 +44,26 @@ return {
         section_separators = { left = sep.arrow_right, right = sep.arrow_left },
         component_separators = { left = sep.thin_right, right = sep.thin_left },
       },
-      extensions = { "neo-tree", "fugitive", "lazy", "mason" },
+      extensions = { "oil", "fugitive", "lazy", "mason" },
       sections = {
         lualine_a = { "mode" },
         lualine_b = { "branch", "diff", "diagnostics" },
         lualine_c = { { "filename", path = 1 } },
         -- No `encoding` / `fileformat`: both are permanent constants here
         -- (utf-8 / unix), so they were two segments of pure noise.
-        lualine_x = { "filetype" },
+        lualine_x = {
+          -- cmdheight = 0 (plugins/cmdline.lua) hides the "recording @q" message.
+          {
+            function()
+              return "recording @" .. vim.fn.reg_recording()
+            end,
+            cond = function()
+              return vim.fn.reg_recording() ~= ""
+            end,
+            color = { fg = c.red },
+          },
+          "filetype",
+        },
         lualine_y = { "progress" },
         lualine_z = { "location" },
       },

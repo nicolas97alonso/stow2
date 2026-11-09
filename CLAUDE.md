@@ -113,22 +113,28 @@ chosen over that deliberately.
   below silently. (`bg_dark`, `surface_hi` and `grey_light` currently have no
   consumer — kept for parity with the key set, not because something reads them.)
 
-  It is a **verbatim copy of kanagawa.nvim's own Wave palette**
-  (`lua/kanagawa/themes.lua`'s `wave` table, resolved against
-  `lua/kanagawa/colors.lua`). That is why `theme.lua` passes no `colors.theme`
-  override to `setup()`: there is nothing to pull the plugin onto, the two are
-  already the same values and cannot drift.
+  The accents are **Kanagawa Wave, retuned** (2026-11-05, because upstream read
+  pale: cream-tinted whites, near-grey aquas and blues, a red at 3.36:1). Its
+  `kanagawa` table holds kanagawa.nvim's own palette names
+  (`lua/kanagawa/colors.lua`) with retuned values, and `theme.lua` passes it as
+  `colors = { palette = c.kanagawa }`. kanagawa merges that over its palette before
+  building the theme, so every syntax group uses the retuned values and the role
+  keys (`fg = k.fujiWhite`, ...) cannot drift from them. The retune rule is
+  documented at the top of `palette.lua`: OKLCH, hue kept, whites near-neutral,
+  accent chroma clamped to a band, lightness raised to a contrast floor, reds on
+  lower floors so they stay distinct. Verify with
+  `nvim --headless +'lua print(vim.api.nvim_get_hl(0,{name="Keyword"}).fg)' +qa`
+  — it must print `oniViolet`'s retuned value, not upstream `#957fb8`.
 
-  The **accents** are Wave, verbatim. The **neutral base** (`bg`, `bg_dark`,
+  The **neutral base** (`bg`, `bg_dark`,
   `surface`, `surface_hi`) is Dragon's `dragonBlack*` grey ladder — the same
   deviation Ghostty makes, for the same reason; see the Terminal section above
   for the rationale and the mapping. `selection` (`#223249`) deliberately stays
   the Wave navy: it is an accent, and `TabLineSel` has to stand out from the grey
   ladder rather than blend into it.
 
-  nvim never paints `bg`, so it exists only for nvim-notify (which rejects
-  `"NONE"`) and lualine's section-a foreground. Keep it equal to Ghostty's
-  `background`.
+  nvim never paints `bg`, so it exists only for lualine's section-a foreground.
+  Keep it equal to Ghostty's `background`.
 - `plugins/theme.lua` — the colorscheme (`rebelot/kanagawa.nvim`, `theme = "wave"`)
   plus **every highlight override in the config that isn't blink-specific**.
   `theme = "wave"` is load-bearing: it is the variant `palette.lua` is copied
@@ -161,7 +167,8 @@ chosen over that deliberately.
   Cleared by hand because `transparent` doesn't cover them: `LineNr`,
   `CursorLineNr`, `SignColumn`, `FoldColumn`, `Folded`, the `Pmenu` family,
   `NormalFloat` / `FloatBorder` / `FloatTitle` / `FloatFooter`, `TelescopeBorder`,
-  `StatusLine` / `StatusLineNC`, the `TabLine` groups, the Noice cmdline groups
+  `StatusLine` / `StatusLineNC`, the `TabLine` groups, `TinyCmdlineNormal` /
+  `TinyCmdlineBorder` (the centered cmdline float from `plugins/cmdline.lua`)
   and `InclineNormal` / `InclineNormalNC`.
 - `plugins/lualine.lua` — a hand-built theme table with a distinct mode color for
   `normal / insert / visual / replace / command / terminal / inactive`.
@@ -180,20 +187,26 @@ chosen over that deliberately.
   Gotcha: a highlight definition consisting only of `bg = "NONE"` collapses to an
   empty group and blink's `default link` wins, so transparency has to come from
   the link target, not from restating it here.
-- `plugins/noice.lua` — `background_colour` for nvim-notify.
 
 ### Terminal
 
 - `ghostty/.config/ghostty/config` — `background`, `foreground`, `cursor-color`,
   `cursor-text`, `selection-background/foreground`, `palette = 0..15`, plus
   `background-opacity` / `background-blur`.
+- `git/.config/git/config` — nothing to change: delta uses `syntax-theme = ansi`
+  and named colors only, so like Starship it re-colors off `palette = 0..15`.
+  Its built-in +/- backgrounds are fixed hex but theme-neutral.
+- `herdr/.config/herdr/config.toml` — nothing to change: `[theme] name = "terminal"`
+  takes herdr's UI colors from the outer terminal, i.e. Ghostty's palette.
 
-The 15 **accent** colors come from Omarchy's own `themes/kanagawa/colors.toml`,
-run through its `default/themed/ghostty.conf.tpl` mapping, verbatim. This is a
-**separate source from `palette.lua`**: Omarchy's own `neovim.lua` theme file
-just installs stock `kanagawa.nvim` with no recoloring, so editor and terminal
-accents are expected to diverge slightly (e.g. terminal `orange` `#c17158` vs.
-nvim's `#ffa066`) — that mismatch is the official behavior, not a bug.
+The accent slots keep the mapping Omarchy's kanagawa theme uses (1 `autumnRed`,
+2 `autumnGreen`, 3 `boatYellow2`, 4 `crystalBlue`, 5 `oniViolet`, 6 `waveAqua1`,
+7/15 `fujiWhite`, 9 `samuraiRed`, 10 `springGreen`, 11 `carpYellow`, 12
+`springBlue`, 13 `springViolet1`, 14 `waveAqua2`), but the **values are the
+retuned ones from `palette.lua`'s `kanagawa` table**, so terminal and editor
+share exact hexes. (Before the retune the terminal used Omarchy's values and nvim
+kanagawa.nvim's, and they diverged.) `foreground` / `cursor-color` /
+`selection-foreground` equal `fg`. Change a value in both files together.
 
 The **neutral base is one deliberate deviation**: Kanagawa **Dragon**'s
 `dragonBlack*` grey ladder replaces Wave's purple-tinted `sumiInk*`, because a
@@ -208,8 +221,9 @@ hand-mixed ones:
 
 `dragonBlack2` rather than Dragon's own `bg` (`dragonBlack3` `#181616`) because
 `#181616` is L\* 7.5 — near-black, not grey. `#1D1C19` is L\* 10.3, the same
-lightness as the One Half Dark base that preceded all this, and it lifts
-foreground contrast from 11.26:1 to 11.74:1. Keep `background`, `cursor-text` and
+lightness as the One Half Dark base that preceded all this, and it lifted
+upstream fujiWhite's contrast from 11.26:1 to 11.74:1 (the retuned `#e0ded5` is
+12.64:1). Keep `background`, `cursor-text` and
 `palette = 0` equal to each other and to `bg` in `palette.lua`.
 
 `bright-black` `#54546d` is the worst pairing against this base at 2.33:1 — it is
@@ -339,20 +353,21 @@ reports "not a symlink" even though it is correctly stowed. Verify with
   onto the `❯` line. 32 keeps the whole line under ~58 columns and preserves the
   IPMS ticket id, which is the part worth reading.
 
-  Colors, with contrast measured against the **current** `#1D1C19` background:
-  `directory` and `character` stay `bold cyan`; `git_branch` is `italic yellow`
-  (#c0a36e, 7.06:1, ~124° of hue off cyan so the two are distinct at a glance,
-  with italic as a second non-color differentiator); `time` is `purple` (#957fb8,
-  4.87:1 — readable but low-saturation, so it reads as a quiet lavender rather
-  than a third competing accent; `bright-black` #54546d at 2.33:1 is the swap if
-  it still pulls focus). Note `black`/`bright-black` at 1.0:1/2.33:1 and the
-  identical `white`/`bright-white` are effectively unusable for distinguishing
-  roles.
+  Colors, with contrast measured against the **current** `#1D1C19` background and
+  the **retuned** palette (2026-11-05): `directory` is `bold cyan` (#46ab94,
+  6.10:1); `character` is `bold green` (#7aa668, 6.07:1); `git_branch` is
+  `italic yellow` (#c7a15a, 7.04:1, far enough off cyan in hue that the two are
+  distinct at a glance, with italic as a second non-color differentiator);
+  `git_status` is `blue` (#7c9cdb, 6.20:1); `time` is `purple` (#a98fd2, 6.12:1 —
+  brighter and more saturated than upstream's 4.87:1 `#957fb8`, so if it now pulls
+  focus, `bright-black` #54546d at 2.33:1 is the swap). Note
+  `black`/`bright-black` at 1.0:1/2.33:1 and the identical `white`/`bright-white`
+  are effectively unusable for distinguishing roles.
 
-  These numbers were stale until 2026-09-28: they were computed against the old
-  `#1f1f28` Wave background (yellow 6.78:1, purple 4.67:1, `bright-black` 2.23:1)
-  and not recomputed when the base moved to `#1D1C19`. **Recompute this paragraph
-  whenever `background` changes** — every ratio here depends on it.
+  These numbers have gone stale twice: on 2026-09-28 they were still computed
+  against the old `#1f1f28` Wave background, and on 2026-11-05 the accents were
+  retuned. **Recompute this paragraph whenever `background` or a terminal accent
+  changes** — every ratio here depends on both.
 
   Transient prompt is **not available** — `starship init zsh` in 1.26 ships no
   transience code at all (it's PowerShell/Cmd/Fish/Bash only; zsh support is
@@ -376,7 +391,7 @@ For nvim, this is checkable without eyeballing it — dump the resolved groups:
 nvim --headless -c 'lua
 local core = {"Normal","NormalFloat","FloatBorder","Pmenu","PmenuSbar","SignColumn",
   "LineNr","StatusLine","TabLine","TabLineFill","Folded","FoldColumn","Conceal",
-  "BlinkCmpMenu","NoiceCmdlinePopup","InclineNormal","TelescopeNormal","TelescopeBorder","NeoTreeNormal"}
+  "BlinkCmpMenu","TinyCmdlineNormal","TinyCmdlineBorder","MsgArea","InclineNormal","TelescopeNormal","TelescopeBorder"}
 local bad = {}
 for _, g in ipairs(core) do
   if vim.api.nvim_get_hl(0, { name = g, link = false }).bg then table.insert(bad, g) end

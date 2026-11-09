@@ -10,6 +10,7 @@ return {
       { "<leader>h", group = "harpoon" },
       { "<leader>c", group = "code" },
       { "<leader>r", group = "rename" },
+      { "<leader>o", group = "octo (github)" },
     },
   },
 }

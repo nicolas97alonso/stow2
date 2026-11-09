@@ -2,11 +2,10 @@ vim.filetype.add({ pattern = { ["Jenkinsfile.*"] = "groovy" } })
 
 -- Leader key
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
--- neo-tree prerequisite: disable netrw so `nvim <dir>` opens the tree, not netrw
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- Not space: octo.nvim's whole buffer keymap set is <localleader>-prefixed, and
+-- with both leaders on space its <localleader>ca (add comment) shadows <leader>ca
+-- (LSP code action).
+vim.g.maplocalleader = ","
 
 -- Remote-plugin hosts. Nothing here uses any of them, and leaving them enabled
 -- is 6 checkhealth warnings about missing perl/ruby/npm/python host packages.

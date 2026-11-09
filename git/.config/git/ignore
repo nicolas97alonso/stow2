@@ -1,0 +1,5 @@
+**/.claude/settings.local.json
+.DS_Store
+*.sw[po]
+*~
+Session.vim

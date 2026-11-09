@@ -1,0 +1,4 @@
+git:
+  diffRenderers:
+    # Delta's own settings come from [delta] in git/.config/git/config.
+    - command: delta --{{colorScheme}} --paging=never

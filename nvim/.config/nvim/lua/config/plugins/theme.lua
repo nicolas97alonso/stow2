@@ -5,12 +5,9 @@ return {
     local c = require("config.palette")
 
     require("kanagawa").setup({
-      -- Wave, not Dragon/Lotus: it is the variant palette.lua is copied from.
-      -- Changing this shifts every accent out from under palette.lua, which the
-      -- statusline, incline and blink all read. Matches Omarchy's own
-      -- neovim.lua, which just installs stock kanagawa.nvim with no on_colors
-      -- equivalent -- Omarchy does not try to recolor the plugin to match its
-      -- terminal colors.toml, and neither does this.
+      -- Wave, not Dragon/Lotus: it is the variant palette.lua is retuned from,
+      -- and its role mapping (syn.string = springGreen, ...) is what turns the
+      -- retuned names below into highlight groups.
       theme = "wave",
       background = { dark = "wave", light = "wave" },
       transparent = true,
@@ -22,9 +19,10 @@ return {
       statementStyle = {},
       functionStyle = {},
       typeStyle = {},
-      -- No per-key overrides in `colors`: palette.lua is a verbatim copy of
-      -- kanagawa's own Wave palette, so there is nothing to pull the plugin
-      -- onto -- they are already the same values and cannot drift.
+      -- The retuned palette, merged over kanagawa's own before the theme is
+      -- built (lua/kanagawa/colors.lua: vim.tbl_extend over `palette`), so every
+      -- syntax group picks up the retuned values with no per-group overrides.
+      colors = { palette = c.kanagawa },
       --
       -- Unlike tokyonight, kanagawa's `transparent` option reaches only
       -- `Normal` (verified against lua/kanagawa/highlights/editor.lua: it is
@@ -80,11 +78,10 @@ return {
           TabLineFill = { fg = c.grey, bg = "NONE" },
           TabLineSel = { fg = c.fg, bg = c.selection, bold = true },
 
-          -- Cmdline (noice). Green border to match the statusline.
-          NoiceCmdlinePopup = { bg = "NONE" },
-          NoiceCmdlinePopupBorder = { fg = c.green, bg = "NONE" },
-          NoiceCmdlineIcon = { fg = c.green, bg = "NONE" },
-          NoiceCmdline = { fg = c.fg, bg = "NONE" },
+          -- Cmdline float (tiny-cmdline over ui2). Green border to match the
+          -- statusline. Its own links are `default = true`, so these win.
+          TinyCmdlineNormal = { fg = c.fg, bg = "NONE" },
+          TinyCmdlineBorder = { fg = c.green, bg = "NONE" },
 
           -- Incline's floating filename label. Set here, not through incline's
           -- own highlight.groups: incline deep-merges user values onto its

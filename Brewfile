@@ -16,6 +16,7 @@ brew "starship"                      # reads starship/.config/starship.toml
 brew "zsh-autosuggestions"           # sourced by .zshrc section 9
 brew "zsh-syntax-highlighting"       # sourced by .zshrc section 9, must be last
 brew "stow"                          # how any of this gets symlinked into place
+brew "herdr"                         # workspaces/tabs/panes; herdr/ package
 
 # Editor
 brew "neovim"
@@ -26,8 +27,13 @@ brew "node"   # markdown-preview.nvim has no prebuilt binary, so it runs `node a
 brew "ripgrep" # telescope live_grep (<leader>fg) is dead without it
 brew "fd"      # telescope find_files and FZF_DEFAULT_COMMAND; falls back to `find` otherwise
 
+# Git
+brew "git-delta" # core.pager + interactive.diffFilter in git/.config/git/config, and lazygit's diffRenderers
+brew "lazygit"   # lazygit/ package
+brew "gh"        # the `git open` alias is `gh browse`
+
 # Shell tooling referenced by .zshrc
-brew "fzf"    # section 7 + the nvimf function
+brew "fzf"    # section 7
 brew "zoxide" # section 7
 brew "direnv" # section 7 hooks it; the `command -v` guard means a missing direnv silently no-ops
 brew "bat"   # `cat` alias and MANPAGER

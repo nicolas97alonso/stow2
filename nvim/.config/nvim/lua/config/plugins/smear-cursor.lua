@@ -18,7 +18,12 @@ return {
       -- draw.lua resolve (checked with `ghostty +show-face --cp=`), so turning
       -- it on would render a finer smear, not tofu. It stays off only because
       -- it has not been tried.
-      filetypes_disabled = { "neo-tree", "lazy", "mason", "TelescopePrompt" },
+      filetypes_disabled = { "oil", "lazy", "mason", "TelescopePrompt" },
+      -- In cmdline mode smear aims at vim.g.ui_cmdline_pos (screen.lua), but
+      -- tiny-cmdline sets that to the completion-menu anchor *below* its float
+      -- (tiny-cmdline/init.lua:291), so a second cursor ran along the float's
+      -- bottom border while typing. Reproduced in a pty, gone with this off.
+      smear_to_cmd = false,
     })
   end,
 }

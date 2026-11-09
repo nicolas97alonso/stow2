@@ -1,0 +1,61 @@
+# herdr 0.9.5. Every option and default: `herdr --default-config`.
+# Apply edits to a running session with prefix+shift+r or `herdr server reload-config`.
+onboarding = false
+
+# Colors come from Ghostty's palette, like starship and delta, so a theme change
+# in ghostty/config needs no edit here.
+[theme]
+name = "terminal"
+
+[ui]
+hide_tab_bar_when_single_tab = true
+
+# macOS notification when an agent in a background workspace finishes or needs
+# input. Default is "off".
+[ui.toast]
+delivery = "system"
+
+[keys]
+prefix = "ctrl+b"
+
+# prefix+g opens lazygit (below), so herdr's own `goto` moves to u.
+goto = "prefix+u"
+
+# Direct shortcuts, no prefix needed. h/l move along the tab bar, k/j along the
+# workspace list in the sidebar. These are ctrl+SHIFT chords, so nvim's own
+# ctrl+h/j/k/l window moves still reach nvim.
+previous_tab = ["prefix+p", "ctrl+shift+h"]
+next_tab = ["prefix+n", "ctrl+shift+l"]
+previous_workspace = "ctrl+shift+k"
+next_workspace = "ctrl+shift+j"
+close_tab = ["prefix+shift+x", "ctrl+shift+x"]
+
+# lazygit over the current layout, in the focused pane's directory. It closes
+# when lazygit exits.
+[[keys.command]]
+key = "prefix+g"
+type = "popup"
+width = "90%"
+height = "90%"
+command = 'cd "$HERDR_ACTIVE_PANE_CWD" && lazygit'
+
+# Start fresh: close every workspace and leave one new shell in ~. Asks first,
+# because it kills whatever runs in them. Detaching (prefix+q) is the opposite:
+# everything keeps running and `herdr` brings it all back.
+[[keys.command]]
+key = "prefix+shift+q"
+type = "popup"
+width = "60%"
+height = "20%"
+command = '''
+printf 'Close ALL workspaces and start fresh in ~? [y/N] '
+read -r answer
+[ "$answer" = y ] || exit 0
+keep=$(herdr workspace create --cwd "$HOME" --focus | jq -r '.result.workspace.workspace_id')
+# This popup dies with the workspace it was opened from, so that one goes last
+# (sort_by puts false before true); otherwise the loop stops halfway.
+herdr workspace list \
+  | jq -r --arg keep "$keep" --arg self "$HERDR_ACTIVE_WORKSPACE_ID" \
+      '[.result.workspaces[].workspace_id | select(. != $keep)] | sort_by(. == $self) | .[]' \
+  | xargs -n1 herdr workspace close >/dev/null
+'''
